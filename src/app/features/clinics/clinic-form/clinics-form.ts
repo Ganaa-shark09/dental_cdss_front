@@ -95,7 +95,7 @@ export class ClinicsForm {
           name: clinic.name ?? '',
           code: clinic.code ?? '',
           email: clinic.email ?? '',
-          phone: clinic.phone ?? '',
+          phone: clinic.phone_number ?? '',
           address: clinic.address ?? '',
           city: clinic.city ?? '',
           state: clinic.state ?? '',
