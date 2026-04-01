@@ -1,0 +1,261 @@
+<p-card styleClass="p-card-section cdss-form-card">
+  @if (config().showToolbar) {
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          @if (toolbar.showBack !== false) {
+            <app-cdss-back-button
+              [label]="toolbar.backLabel || 'Back'"
+              (click)="onBackClick()"
+            ></app-cdss-back-button>
+          }
+
+          @if (config().title) {
+            <h2 class="cdss-section-card-title">{{ config().title }}</h2>
+          }
+        </div>
+
+        <div class="cdss-section-card-buttons">
+          @if (toolbar.showReset !== false) {
+            <p-button
+              icon="pi pi-refresh"
+              [label]="toolbar.resetLabel || 'Reset'"
+              type="button"
+              [outlined]="true"
+              severity="secondary"
+              (onClick)="onResetClick()"
+            ></p-button>
+          }
+
+          @if (toolbar.showSave !== false) {
+            <app-cdss-save-button
+              [label]="toolbar.saveLabel || 'Save'"
+              [isDisabled]="disableOnInvalid() && formGroup.invalid"
+              [loading]="loading()"
+              (click)="onSubmit()"
+            ></app-cdss-save-button>
+          }
+        </div>
+      </div>
+    </ng-template>
+  }
+
+  <p-card styleClass="p-card-section-panel cdss-form-panel">
+    <form [formGroup]="formGroup" class="cdss-form-body">
+      @for (group of getResolvedGroups(); track group.name) {
+        <div class="cdss-form-group-block">
+          <p-fieldset [legend]="group.name">
+            <div class="grid">
+              @if (loading()) {
+                @for (item of [1, 2, 3, 4, 5, 6]; track $index) {
+                  <div
+                    [class]="getColumnClass({ name: '', label: '', type: 'text' }, group) + ' mb-3'"
+                  >
+                    <p-skeleton height="1rem" width="55%" class="mb-2"></p-skeleton>
+                    <p-skeleton height="2.5rem" width="100%"></p-skeleton>
+                  </div>
+                }
+              } @else {
+                @for (field of group.fields; track field.name) {
+                  @if (isFieldVisible(field)) {
+                    <div [class]="getColumnClass(field, group)">
+                      @if (field.type !== 'boolean' && field.type !== 'button') {
+                        <div class="cdss-field-header">
+                          <label [for]="field.name" class="cdss-field-label">
+                            {{ field.label }}
+                            @if (isFieldRequired(field.name)) {
+                              <span class="required">*</span>
+                            }
+                          </label>
+
+                          @if (field.link) {
+                            <button
+                              pButton
+                              type="button"
+                              [icon]="field.link.icon || 'pi pi-plus'"
+                              [label]="field.link.label"
+                              class="p-button-sm p-button-text p-0"
+                              (click)="onLinkClick($event, field)"
+                            ></button>
+                          }
+                        </div>
+                      }
+
+                      @switch (field.type) {
+                        @case ('text') {
+                          <input
+                            pInputText
+                            type="text"
+                            class="w-full"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Enter ' + field.label"
+                            [formControl]="getFormControl(field.name)"
+                            [readonly]="isReadonly(field)"
+                            (input)="onFieldInput(field, $any($event.target).value)"
+                          />
+                        }
+
+                        @case ('email') {
+                          <input
+                            pInputText
+                            type="email"
+                            class="w-full"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Enter ' + field.label"
+                            [formControl]="getFormControl(field.name)"
+                            [readonly]="isReadonly(field)"
+                            (input)="onFieldInput(field, $any($event.target).value)"
+                          />
+                        }
+
+                        @case ('number') {
+                          <p-inputnumber
+                            mode="decimal"
+                            [inputId]="field.name"
+                            styleClass="w-full"
+                            [min]="field.min"
+                            [max]="field.max"
+                            [minFractionDigits]="field.minFractionDigits ?? 0"
+                            [maxFractionDigits]="field.maxFractionDigits ?? 0"
+                            [placeholder]="field.placeholder || 'Enter ' + field.label"
+                            [formControl]="getFormControl(field.name)"
+                            [readonly]="isReadonly(field)"
+                            (onInput)="onFieldInput(field, $event.value)"
+                          ></p-inputnumber>
+                        }
+
+                        @case ('date') {
+                          <p-datepicker
+                            [iconDisplay]="'input'"
+                            [showIcon]="true"
+                            dataType="string"
+                            dateFormat="yy-mm-dd"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Select ' + field.label"
+                            styleClass="w-full"
+                            appendTo="body"
+                            [formControl]="getFormControl(field.name)"
+                            [readonlyInput]="isReadonly(field)"
+                            (onSelect)="onFieldInput(field, $event)"
+                          ></p-datepicker>
+                        }
+
+                        @case ('select') {
+                          <p-select
+                            [filter]="true"
+                            [showClear]="true"
+                            [options]="field.options || []"
+                            optionLabel="label"
+                            optionValue="value"
+                            styleClass="w-full"
+                            appendTo="body"
+                            [placeholder]="field.placeholder || 'Select ' + field.label"
+                            [id]="field.name"
+                            [formControl]="getFormControl(field.name)"
+                            [disabled]="isReadonly(field)"
+                            (onChange)="onFieldInput(field, $event.value)"
+                            (onFilter)="onFieldFilter(field, $event.filter)"
+                          ></p-select>
+                        }
+
+                        @case ('multi-select') {
+                          <p-multiselect
+                            [filter]="true"
+                            [showClear]="true"
+                            [options]="field.options || []"
+                            optionLabel="label"
+                            optionValue="value"
+                            styleClass="w-full"
+                            appendTo="body"
+                            [placeholder]="field.placeholder || 'Select ' + field.label"
+                            [id]="field.name"
+                            [formControl]="getFormControl(field.name)"
+                            [disabled]="isReadonly(field)"
+                            (onChange)="onFieldInput(field, $event.value)"
+                            (onFilter)="onFieldFilter(field, $event.filter)"
+                          ></p-multiselect>
+                        }
+
+                        @case ('boolean') {
+                          <div class="cdss-boolean-field">
+                            <p-checkbox
+                              binary="true"
+                              [inputId]="field.name"
+                              [formControl]="getFormControl(field.name)"
+                              [disabled]="isReadonly(field)"
+                              (onChange)="onFieldInput(field, $event.checked)"
+                            ></p-checkbox>
+
+                            <label [for]="field.name" class="cdss-boolean-label">
+                              {{ field.label }}
+                              @if (isFieldRequired(field.name)) {
+                                <span class="required">*</span>
+                              }
+                            </label>
+                          </div>
+                        }
+
+                        @case ('textarea') {
+                          <textarea
+                            pTextarea
+                            class="w-full"
+                            [rows]="field.rows || 3"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Enter ' + field.label"
+                            [formControl]="getFormControl(field.name)"
+                            [readonly]="isReadonly(field)"
+                            (input)="onFieldInput(field, $any($event.target).value)"
+                          ></textarea>
+                        }
+
+                        @case ('tags') {
+                          <div class="cdss-tags-field">
+                            @if (field.tags?.length) {
+                              <div class="cdss-tags-list">
+                                @for (tag of field.tags; track tag) {
+                                  <p-tag
+                                    [value]="tag"
+                                    [severity]="field.tagSeverity || 'secondary'"
+                                    [styleClass]="field.tagsOutlined !== false ? 'outlined' : ''"
+                                  ></p-tag>
+                                }
+                              </div>
+                            } @else {
+                              <span class="cdss-empty-value">—</span>
+                            }
+                          </div>
+                        }
+
+                        @case ('button') {
+                          <div class="cdss-inline-button">
+                            <p-button
+                              [label]="field.buttonConfig?.label || field.label"
+                              [icon]="field.buttonConfig?.icon"
+                              [severity]="field.buttonConfig?.severity || 'primary'"
+                              [outlined]="field.buttonConfig?.outlined || false"
+                              [disabled]="field.buttonConfig?.disabled || false"
+                              [loading]="field.buttonConfig?.loading || false"
+                              (onClick)="onFieldButtonClick(field)"
+                            ></p-button>
+                          </div>
+                        }
+                      }
+
+                      @if (getFieldErrors(field).length > 0) {
+                        <div class="cdss-field-errors">
+                          @for (error of getFieldErrors(field); track error) {
+                            <small class="p-error block">{{ error }}</small>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                }
+              }
+            </div>
+          </p-fieldset>
+        </div>
+      }
+    </form>
+  </p-card>
+</p-card>

@@ -1,0 +1,116 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--app-border);
+    background: var(--app-surface);
+}
+
+:host ::ng-deep .p-datatable {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100%;
+    background: var(--app-surface);
+}
+
+:host ::ng-deep .p-datatable-table-container {
+    flex: 1;
+}
+
+:host ::ng-deep .p-datatable-wrapper {
+    height: 100%;
+}
+
+:host ::ng-deep .p-datatable-thead>tr>th {
+    background: var(--app-surface-muted);
+    color: var(--app-text);
+    border-color: var(--app-border);
+    font-weight: 600;
+}
+
+:host ::ng-deep .p-datatable-tbody>tr>td {
+    background: var(--app-surface);
+    color: var(--app-text);
+    border-color: var(--app-border);
+}
+
+:host ::ng-deep .p-paginator {
+    background: var(--app-surface);
+    border-top: 1px solid var(--app-border);
+    color: var(--app-text);
+}
+
+.cdss-actions-column {
+    width: 180px;
+}
+
+.cdss-actions-cell {
+    white-space: nowrap;
+}
+
+.cdss-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.cdss-bool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    border: 1px solid;
+}
+
+.cdss-bool--true {
+    color: var(--app-success);
+    border-color: var(--app-success);
+}
+
+.cdss-bool--false {
+    color: var(--app-danger);
+    border-color: var(--app-danger);
+}
+
+.empty-state-cell {
+    padding: 0 !important;
+    border: none !important;
+    text-align: center;
+}
+
+.empty-state-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 3rem 2rem;
+    width: 100%;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--app-text-muted);
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--app-text-muted);
+    margin: 0;
+    text-align: center;
+    width: 100%;
+}
+
+:host ::ng-deep .p-select-overlay,
+:host ::ng-deep .p-multiselect-overlay {
+    z-index: 9999 !important;
+}

@@ -1,0 +1,72 @@
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--app-surface);
+    border-bottom: 1px solid var(--app-border);
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: var(--app-text);
+}
+
+.topbar p {
+    margin: 4px 0 0;
+    color: var(--app-text-muted);
+    font-size: 0.92rem;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: var(--app-surface-muted);
+    color: var(--app-text);
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+.theme-toggle-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1e293b, #334155);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+}
+
+.theme-toggle-btn.light {
+    background: linear-gradient(145deg, #facc15, #fde68a);
+}
+
+.theme-toggle-btn svg {
+    transition: transform 0.4s ease;
+}
+
+.theme-toggle-btn:hover svg {
+    transform: rotate(180deg) scale(1.2);
+}

@@ -1,0 +1,99 @@
+<p-card class="p-card-detail" [class.center-content]="centerContent()">
+  <ng-template pTemplate="title">
+    {{ title() }}
+  </ng-template>
+
+  @if (subtitle()) {
+    <ng-template pTemplate="subtitle">
+      {{ subtitle() }}
+    </ng-template>
+  }
+
+  <div class="detail-card-body">
+    @for (row of rows(); track $index) {
+      <div
+        class="detail-card-row"
+        [class.full-width]="row.fullWidth !== false"
+        [class.half-width]="row.fullWidth === false"
+      >
+        @if (row.type === 'longtext') {
+          <div class="detail-card-longtext">
+            @if (row.label) {
+              <div class="detail-card-label">{{ row.label }}</div>
+            }
+            <div class="detail-card-value">{{ getDisplayValue(row) }}</div>
+          </div>
+        } @else {
+          @if (row.label) {
+            <div class="detail-card-label">{{ row.label }}</div>
+          }
+
+          <div class="detail-card-value">
+            @switch (row.type || 'text') {
+              @case ('tag') {
+                <p-tag
+                  [value]="getDisplayValue(row)"
+                  [severity]="row.tagSeverity || 'secondary'"
+                  styleClass="outlined"
+                ></p-tag>
+              }
+
+              @case ('tags') {
+                <div class="flex flex-wrap justify-end gap-2">
+                  @for (tag of row.tags; track tag) {
+                    <p-tag
+                      [value]="tag"
+                      [severity]="row.tagSeverity || 'secondary'"
+                      [styleClass]="row.tagsOutlined !== false ? 'outlined' : ''"
+                    ></p-tag>
+                  }
+
+                  @if (!row.tags?.length) {
+                    <span>—</span>
+                  }
+                </div>
+              }
+
+              @case ('link') {
+                @if (row.routerLink) {
+                  <a [routerLink]="row.routerLink" class="detail-card-link-wrapper">
+                    <span class="detail-card-link-text">{{ getDisplayValue(row) }}</span>
+                    <i class="pi pi-arrow-up-right detail-card-link-icon"></i>
+                  </a>
+                } @else {
+                  <span>{{ getDisplayValue(row) }}</span>
+                }
+              }
+
+              @case ('external-link') {
+                @if (row.externalLink) {
+                  <a
+                    [href]="row.externalLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="detail-card-link-wrapper"
+                  >
+                    <span class="detail-card-link-text">{{ getDisplayValue(row) }}</span>
+                    <i class="pi pi-external-link detail-card-link-icon"></i>
+                  </a>
+                } @else {
+                  <span>{{ getDisplayValue(row) }}</span>
+                }
+              }
+
+              @case ('custom') {
+                <ng-container [ngTemplateOutlet]="row.customTemplate"></ng-container>
+              }
+
+              @default {
+                <span>{{ getDisplayValue(row) }}</span>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-content></ng-content>
+</p-card>

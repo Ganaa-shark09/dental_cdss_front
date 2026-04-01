@@ -1,0 +1,171 @@
+<p-table
+  [dataKey]="dataKey"
+  [value]="data()"
+  [loading]="loading()"
+  [showLoader]="false"
+  [lazy]="config().lazy ?? false"
+  [paginator]="showPaginator"
+  [rows]="rows"
+  [totalRecords]="totalRecords()"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="rowsPerPageOptions"
+  [rowHover]="true"
+  [tableStyle]="{ 'min-width': '100rem' }"
+  [(selection)]="selectedItems"
+  (selectionChange)="onSelectionChanged($event)"
+  (onLazyLoad)="onLazyLoaded($event)"
+  [currentPageReportTemplate]="currentPageReportTemplate"
+  size="small"
+  [scrollable]="true"
+  scrollHeight="flex"
+  paginatorDropdownAppendTo="body"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      @if (config().enableSelection) {
+        <th style="width: 4rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+      }
+
+      @for (col of config().columns; track col.field) {
+        <th [pSortableColumn]="col.sortable !== false ? col.sortField || col.field : undefined">
+          {{ col.header }}
+          @if (col.sortable !== false) {
+            <p-sortIcon [field]="col.sortField || col.field"></p-sortIcon>
+          }
+        </th>
+      }
+
+      @if (showViewButton || showEditButton || showDeleteButton || hasCustomActions()) {
+        <th class="cdss-actions-column">Actions</th>
+      }
+    </tr>
+
+    @if (loading()) {
+      <p-progressbar mode="indeterminate" [style]="{ height: '4px' }" class="absolute w-full" />
+    }
+  </ng-template>
+
+  <ng-template pTemplate="body" let-item>
+    <tr
+      [style.cursor]="
+        shouldShowViewButton(item) || shouldShowEditButton(item) ? 'pointer' : 'default'
+      "
+      (click)="onRowClick(item, $event)"
+    >
+      @if (config().enableSelection) {
+        <td>
+          <p-tableCheckbox [value]="item"></p-tableCheckbox>
+        </td>
+      }
+
+      @for (col of config().columns; track col.field) {
+        <td>
+          @switch (col.type || 'text') {
+            @case ('tag') {
+              <p-tag
+                [value]="getDisplayValue(item, col)"
+                [severity]="getTagSeverity(item, col)"
+                styleClass="outlined"
+              ></p-tag>
+            }
+
+            @case ('boolean') {
+              @if (getDisplayValue(item, col)) {
+                <span class="cdss-bool cdss-bool--true">
+                  <i class="pi pi-check"></i>
+                </span>
+              } @else {
+                <span class="cdss-bool cdss-bool--false">
+                  <i class="pi pi-times"></i>
+                </span>
+              }
+            }
+
+            @case ('date') {
+              @if (getDisplayValue(item, col)) {
+                {{ getDisplayValue(item, col) | date: 'mediumDate' }}
+              } @else {
+                —
+              }
+            }
+
+            @case ('currency') {
+              @if (
+                getDisplayValue(item, col) !== null && getDisplayValue(item, col) !== undefined
+              ) {
+                {{ getDisplayValue(item, col) | currency: getCurrencyCode() }}
+              } @else {
+                —
+              }
+            }
+
+            @default {
+              {{ getDisplayValue(item, col) ?? '—' }}
+            }
+          }
+        </td>
+      }
+
+      @if (showViewButton || showEditButton || showDeleteButton || hasCustomActions()) {
+        <td class="cdss-actions-cell">
+          <div class="cdss-row-actions">
+            @if (shouldShowViewButton(item)) {
+              <p-button
+                icon="pi pi-eye"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                pTooltip="View"
+                (onClick)="onView(item)"
+              ></p-button>
+            }
+
+            @if (shouldShowEditButton(item)) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="contrast"
+                pTooltip="Edit"
+                (onClick)="onEdit(item)"
+              ></p-button>
+            }
+
+            @if (shouldShowDeleteButton(item)) {
+              <app-cdss-delete-button
+                pTooltip="Delete"
+                (click)="onDelete(item)"
+              ></app-cdss-delete-button>
+            }
+
+            @if (hasCustomActions()) {
+              <ng-container
+                *ngTemplateOutlet="customActionsTemplate; context: { $implicit: item }"
+              ></ng-container>
+            }
+          </div>
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td
+        [attr.colspan]="
+          (config().enableSelection ? 1 : 0) +
+          config().columns.length +
+          (showViewButton || showEditButton || showDeleteButton || hasCustomActions() ? 1 : 0)
+        "
+        class="empty-state-cell"
+      >
+        <div class="empty-state-content">
+          <i class="pi pi-inbox empty-state-icon"></i>
+          <p class="empty-state-title">No data found.</p>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

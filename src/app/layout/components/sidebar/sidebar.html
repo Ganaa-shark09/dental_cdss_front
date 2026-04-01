@@ -1,0 +1,18 @@
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">DC</div>
+    <div>
+      <h2>Dental CDSS</h2>
+      <p>Clinical Workspace</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of menuItems; track item.route) {
+      <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+</aside>

@@ -1,0 +1,37 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <h1 class="cdss-page-card-title">Clinics</h1>
+  </ng-template>
+
+  <p-card styleClass="p-card-section">
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          <h2 class="cdss-section-card-title">Manage Clinics</h2>
+        </div>
+
+        <div class="cdss-section-card-buttons">
+          <app-cdss-new-button label="New Clinic" (click)="createClinic()"></app-cdss-new-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <p-card styleClass="p-card-section-panel">
+      <app-cdss-table
+        [data]="clinics()"
+        [config]="tableConfig()"
+        [loading]="loading()"
+        [totalRecords]="totalRecords()"
+        (view)="onViewClinic($event)"
+        (edit)="onEditClinic($event)"
+        (lazyLoad)="onLazyLoad($event)"
+      >
+        <ng-template #actions let-item>
+          <app-cdss-delete-button (click)="deleteClinic(item)"></app-cdss-delete-button>
+        </ng-template>
+      </app-cdss-table>
+    </p-card>
+  </p-card>
+</p-card>
+
+<p-confirmDialog></p-confirmDialog>
