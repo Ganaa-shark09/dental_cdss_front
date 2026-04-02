@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
+import { MessageService } from 'primeng/api';
 
 import { ClinicsService } from '../services/clinics.service';
 import { Clinic } from '../models/clinic.model';
@@ -22,6 +23,7 @@ export class ClinicsDetails {
   private readonly clinicsService = inject(ClinicsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly messageService = inject(MessageService);
 
   readonly uuid = this.route.snapshot.paramMap.get('uuid') || '';
 
@@ -74,6 +76,11 @@ export class ClinicsDetails {
       },
       error: () => {
         this.loading.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Load failed',
+          detail: 'Unable to load clinic details.',
+        });
       },
     });
   }

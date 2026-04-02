@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
+import { MessageService } from 'primeng/api';
 
 import { ClinicsService, ClinicPayload } from '../services/clinics.service';
 import { CdssForm } from '../../../shared/components/form/cdss-form/cdss-form';
@@ -18,6 +19,7 @@ export class ClinicsForm {
   private readonly clinicsService = inject(ClinicsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly messageService = inject(MessageService);
 
   readonly uuid = this.route.snapshot.paramMap.get('uuid');
   readonly isEditMode = !!this.uuid;
@@ -29,7 +31,7 @@ export class ClinicsForm {
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     code: new FormControl('', { nonNullable: true }),
     email: new FormControl('', { nonNullable: true }),
-    phone: new FormControl('', { nonNullable: true }),
+    phone_number: new FormControl('', { nonNullable: true }),
     address: new FormControl('', { nonNullable: true }),
     city: new FormControl('', { nonNullable: true }),
     state: new FormControl('', { nonNullable: true }),
@@ -57,7 +59,7 @@ export class ClinicsForm {
           { name: 'name', label: 'Clinic Name', type: 'text' },
           { name: 'code', label: 'Code', type: 'text' },
           { name: 'email', label: 'Email', type: 'email' },
-          { name: 'phone', label: 'Phone', type: 'text' },
+          { name: 'phone_number', label: 'Phone', type: 'text' },
           { name: 'city', label: 'City', type: 'text' },
           { name: 'state', label: 'State', type: 'text' },
           { name: 'country', label: 'Country', type: 'text' },
@@ -95,7 +97,7 @@ export class ClinicsForm {
           name: clinic.name ?? '',
           code: clinic.code ?? '',
           email: clinic.email ?? '',
-          phone: clinic.phone_number ?? '',
+          phone_number: clinic.phone_number ?? '',
           address: clinic.address ?? '',
           city: clinic.city ?? '',
           state: clinic.state ?? '',
@@ -107,6 +109,11 @@ export class ClinicsForm {
       },
       error: () => {
         this.loading.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Load failed',
+          detail: 'Unable to load clinic details.',
+        });
       },
     });
   }
@@ -124,10 +131,20 @@ export class ClinicsForm {
     request$.subscribe({
       next: (clinic) => {
         this.saving.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.isEditMode ? 'Updated' : 'Created',
+          detail: `Clinic ${this.isEditMode ? 'updated' : 'created'} successfully.`,
+        });
         this.router.navigate(['/clinics', clinic.uuid]);
       },
       error: () => {
         this.saving.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Save failed',
+          detail: `Unable to ${this.isEditMode ? 'update' : 'create'} clinic.`,
+        });
       },
     });
   }
