@@ -1,9 +1,9 @@
 export interface Staff {
   uuid: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  phone_number?: string;
+  employee_id?: string;
+  user_name?: string;
+  user_email?: string;
+  years_of_experience?: string;
   role?: string;
   designation?: string;
   specialization?: string;

@@ -1,7 +1,7 @@
 <p-card styleClass="p-card-page">
-  <ng-template #header>
+  <!-- <ng-template #header>
     <h1 class="cdss-page-card-title">Staff</h1>
-  </ng-template>
+  </ng-template> -->
 
   <p-card styleClass="p-card-section">
     <ng-template #header>
@@ -27,7 +27,6 @@
         (lazyLoad)="onLazyLoad($event)"
       >
         <ng-template #actions let-item>
-          <app-cdss-delete-button (click)="deleteStaff(item)"></app-cdss-delete-button>
         </ng-template>
       </app-cdss-table>
     </p-card>
