@@ -1,0 +1,22 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <h1 class="cdss-page-card-title">
+      {{ isEditMode ? 'Edit Consultation' : 'New Consultation' }}
+    </h1>
+  </ng-template>
+
+  <app-cdss-form
+    [config]="config()"
+    [loading]="
+      loading() ||
+      saving() ||
+      patientsLoading() ||
+      staffLoading() ||
+      appointmentsLoading() ||
+      clinicsLoading()
+    "
+    [disableOnInvalid]="true"
+    (submit)="save($event.rawValue)"
+    (back)="onBack()"
+  ></app-cdss-form>
+</p-card>
