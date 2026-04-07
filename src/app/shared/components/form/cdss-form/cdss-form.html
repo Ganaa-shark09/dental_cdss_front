@@ -140,6 +140,24 @@
                           ></p-datepicker>
                         }
 
+                        @case ('datetime') {
+                          <p-datepicker
+                            [iconDisplay]="'input'"
+                            [showIcon]="true"
+                            [showTime]="true"
+                            [hourFormat]="'24'"
+                            dataType="string"
+                            dateFormat="yy-mm-dd"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Select ' + field.label"
+                            styleClass="w-full"
+                            appendTo="body"
+                            [formControl]="getFormControl(field.name)"
+                            [readonlyInput]="isReadonly(field)"
+                            (onSelect)="onFieldInput(field, $event)"
+                          ></p-datepicker>
+                        }
+
                         @case ('select') {
                           <p-select
                             [filter]="true"
