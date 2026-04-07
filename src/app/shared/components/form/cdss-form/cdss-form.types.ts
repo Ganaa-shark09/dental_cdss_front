@@ -5,6 +5,7 @@ export type CdssFieldType =
   | 'email'
   | 'number'
   | 'date'
+  | 'time'
   | 'datetime'
   | 'select'
   | 'multi-select'

@@ -1,0 +1,24 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <div class="cdss-section-card-header">
+      <div class="cdss-section-card-title-section">
+        <h1 class="cdss-page-card-title">Appointment Details</h1>
+      </div>
+
+      <div class="cdss-section-card-buttons">
+        <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
+        <app-cdss-save-button
+          label="Edit"
+          severity="secondary"
+          (click)="onEdit()"
+        ></app-cdss-save-button>
+      </div>
+    </div>
+  </ng-template>
+
+  <app-cdss-details
+    [title]="appointment()?.patient_name || 'Appointment'"
+    [subtitle]="appointment()?.appointment_date || ''"
+    [rows]="detailRows()"
+  ></app-cdss-details>
+</p-card>
