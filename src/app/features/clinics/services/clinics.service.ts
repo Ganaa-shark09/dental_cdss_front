@@ -14,7 +14,7 @@ export interface ClinicPayload {
   name: string;
   code?: string;
   email?: string;
-  phone?: string;
+  phone_number?: string;
   address?: string;
   city?: string;
   state?: string;

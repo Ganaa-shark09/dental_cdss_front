@@ -16,7 +16,13 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="field">
         <label for="username">Username</label>
-        <input id="username" type="text" pInputText formControlName="username" />
+        <input
+          id="username"
+          type="text"
+          pInputText
+          formControlName="username"
+          class="field-input"
+        />
 
         @if (usernameControl.invalid && usernameControl.touched) {
           <small class="field-error">Username is required.</small>
@@ -30,20 +36,22 @@
           formControlName="password"
           [feedback]="false"
           [toggleMask]="true"
-          styleClass="w-full"
-          inputStyleClass="w-full"
+          styleClass="password-field"
+          inputStyleClass="password-input"
         />
         @if (passwordControl.invalid && passwordControl.touched) {
           <small class="field-error">Password is required.</small>
         }
       </div>
 
-      <app-cdss-save-button
-        label="Sign In"
-        type="submit"
-        [loading]="loading"
-        [isDisabled]="loginForm.invalid"
-      ></app-cdss-save-button>
+      <div class="login-actions">
+        <app-cdss-save-button
+          label="Sign In"
+          type="submit"
+          [loading]="loading"
+          [isDisabled]="loginForm.invalid"
+        ></app-cdss-save-button>
+      </div>
     </form>
 
     <div class="login-footer">

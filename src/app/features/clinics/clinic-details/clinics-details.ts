@@ -39,7 +39,7 @@ export class ClinicsDetails {
       { label: 'Clinic Name', value: clinic.name, type: 'text', fullWidth: false },
       { label: 'Code', value: clinic.code || '—', type: 'text', fullWidth: false },
       { label: 'Email', value: clinic.email || '—', type: 'text', fullWidth: false },
-      { label: 'Phone', value: clinic.phone || '—', type: 'text', fullWidth: false },
+      { label: 'Phone', value: clinic.phone_number || '—', type: 'text', fullWidth: false },
       { label: 'City', value: clinic.city || '—', type: 'text', fullWidth: false },
       { label: 'State', value: clinic.state || '—', type: 'text', fullWidth: false },
       { label: 'Country', value: clinic.country || '—', type: 'text', fullWidth: false },

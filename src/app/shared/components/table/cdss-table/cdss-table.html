@@ -38,7 +38,7 @@
       }
 
       @if (showViewButton || showEditButton || showDeleteButton || hasCustomActions()) {
-        <th class="cdss-actions-column">Actions</th>
+        <th pFrozenColumn alignFrozen="right" class="cdss-actions-column">Actions</th>
       }
     </tr>
 
@@ -109,7 +109,7 @@
       }
 
       @if (showViewButton || showEditButton || showDeleteButton || hasCustomActions()) {
-        <td class="cdss-actions-cell">
+        <td pFrozenColumn alignFrozen="right" class="cdss-actions-cell">
           <div class="cdss-row-actions">
             @if (shouldShowViewButton(item)) {
               <p-button
