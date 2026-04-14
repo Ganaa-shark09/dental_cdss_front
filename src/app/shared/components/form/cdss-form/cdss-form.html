@@ -125,22 +125,6 @@
                         }
 
                         @case ('date') {
-                          <p-datepicker
-                            [iconDisplay]="'input'"
-                            [showIcon]="true"
-                            dataType="string"
-                            dateFormat="yy-mm-dd"
-                            [id]="field.name"
-                            [placeholder]="field.placeholder || 'Select ' + field.label"
-                            styleClass="w-full"
-                            appendTo="body"
-                            [formControl]="getFormControl(field.name)"
-                            [readonlyInput]="isReadonly(field)"
-                            (onSelect)="onFieldInput(field, $event)"
-                          ></p-datepicker>
-                        }
-
-                        @case ('date') {
                           <input
                             pInputText
                             type="date"
@@ -164,6 +148,24 @@
                           />
                         }
 
+                        @case ('datetime') {
+                          <p-datepicker
+                            [iconDisplay]="'input'"
+                            [showIcon]="true"
+                            [showTime]="true"
+                            [hourFormat]="'24'"
+                            dataType="string"
+                            dateFormat="yy-mm-dd"
+                            [id]="field.name"
+                            [placeholder]="field.placeholder || 'Select ' + field.label"
+                            styleClass="w-full"
+                            appendTo="body"
+                            [formControl]="getFormControl(field.name)"
+                            [readonlyInput]="isReadonly(field)"
+                            (onSelect)="onFieldInput(field, $event)"
+                          ></p-datepicker>
+                        }
+
                         @case ('select') {
                           <p-select
                             [filter]="true"
@@ -176,7 +178,6 @@
                             [placeholder]="field.placeholder || 'Select ' + field.label"
                             [id]="field.name"
                             [formControl]="getFormControl(field.name)"
-                            [disabled]="isReadonly(field)"
                             (onChange)="onFieldInput(field, $event.value)"
                             (onFilter)="onFieldFilter(field, $event.filter)"
                           ></p-select>
@@ -194,7 +195,6 @@
                             [placeholder]="field.placeholder || 'Select ' + field.label"
                             [id]="field.name"
                             [formControl]="getFormControl(field.name)"
-                            [disabled]="isReadonly(field)"
                             (onChange)="onFieldInput(field, $event.value)"
                             (onFilter)="onFieldFilter(field, $event.filter)"
                           ></p-multiselect>
@@ -206,7 +206,6 @@
                               binary="true"
                               [inputId]="field.name"
                               [formControl]="getFormControl(field.name)"
-                              [disabled]="isReadonly(field)"
                               (onChange)="onFieldInput(field, $event.checked)"
                             ></p-checkbox>
 

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  effect,
   inject,
   input,
   output,
@@ -66,6 +67,13 @@ export class CdssForm {
   back = output<void>();
   reset = output<void>();
 
+  constructor() {
+    effect(() => {
+      const cfg = this.config();
+      this.applyReadonlyStates(cfg);
+    });
+  }
+
   get formGroup(): FormGroup {
     return this.config().formGroup;
   }
@@ -73,7 +81,6 @@ export class CdssForm {
   get toolbar() {
     return this.config().toolbar ?? {};
   }
-  
 
   getResolvedGroups(): CdssFormGroupConfig[] {
     const cfg = this.config();
@@ -219,6 +226,29 @@ export class CdssForm {
       value: this.formGroup.value,
       rawValue,
     });
+  }
+
+  private applyReadonlyStates(cfg: CdssFormConfig): void {
+    const allFields: CdssFormFieldConfig[] = [
+      ...(cfg.fields ?? []),
+      ...(cfg.groups?.flatMap((group) => group.fields) ?? []),
+    ];
+
+    for (const field of allFields) {
+      const control = this.formGroup.get(field.name);
+
+      if (!(control instanceof FormControl)) {
+        continue;
+      }
+
+      const shouldDisable = !!field.readonly;
+
+      if (shouldDisable && control.enabled) {
+        control.disable({ emitEvent: false });
+      } else if (!shouldDisable && control.disabled) {
+        control.enable({ emitEvent: false });
+      }
+    }
   }
 
   private markAllAsTouched(control: AbstractControl): void {

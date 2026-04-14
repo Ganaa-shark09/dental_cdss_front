@@ -57,6 +57,13 @@ export const routes: Routes = [
             (m) => m.consultationsRoutes,
           ),
       },
+      {
+        path: ROUTES.app.prescriptions,
+        loadChildren: () =>
+          import('./features/prescriptions/prescriptions.routes').then(
+            (m) => m.prescriptionsRoutes,
+          ),
+      },
     ],
   },
   {

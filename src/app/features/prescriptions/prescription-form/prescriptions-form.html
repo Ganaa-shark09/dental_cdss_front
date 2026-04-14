@@ -1,0 +1,16 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <h1 class="cdss-page-card-title">
+      {{ isEditMode ? 'Edit Prescription' : 'New Prescription' }}
+    </h1>
+  </ng-template>
+
+  <app-cdss-form
+    [config]="config()"
+    [loading]="
+      loading() || saving() || patientsLoading() || staffLoading() || consultationsLoading()
+    "
+    (submit)="save($event.rawValue)"
+    (back)="onBack()"
+  ></app-cdss-form>
+</p-card>
