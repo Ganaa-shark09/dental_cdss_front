@@ -1,8 +1,6 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 100%;
+    display: block;
+    width: 100%;
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--app-border);
@@ -10,19 +8,11 @@
 }
 
 :host ::ng-deep .p-datatable {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 100%;
     background: var(--app-surface);
 }
 
 :host ::ng-deep .p-datatable-table-container {
-    flex: 1;
-}
-
-:host ::ng-deep .p-datatable-wrapper {
-    height: 100%;
+    overflow: auto;
 }
 
 :host ::ng-deep .p-datatable-thead>tr>th {
@@ -38,14 +28,37 @@
     border-color: var(--app-border);
 }
 
+:host ::ng-deep .p-datatable-tbody>tr {
+    transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .p-datatable-tbody>tr:hover>td {
+    background: var(--app-surface-muted);
+}
+
 :host ::ng-deep .p-paginator {
     background: var(--app-surface);
     border-top: 1px solid var(--app-border);
     color: var(--app-text);
 }
 
-.cdss-actions-column {
-    width: 180px;
+:host ::ng-deep .p-datatable-frozen-column {
+    background: var(--app-surface) !important;
+}
+
+:host ::ng-deep .p-datatable-thead>tr>th.p-datatable-frozen-column {
+    background: var(--app-surface-muted) !important;
+    z-index: 2;
+}
+
+:host ::ng-deep .p-datatable-tbody>tr>td.p-datatable-frozen-column {
+    background: var(--app-surface) !important;
+    z-index: 1;
+}
+
+.cdss-actions-column,
+.cdss-actions-cell {
+    min-width: 180px;
 }
 
 .cdss-actions-cell {

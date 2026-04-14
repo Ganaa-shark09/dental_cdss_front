@@ -36,4 +36,6 @@ export interface CdssTableConfig {
 
   currencyCode?: string;
   currentPageReportTemplate?: string;
+
+  scrollHeight?: string;
 }
