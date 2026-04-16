@@ -148,6 +148,16 @@
                           />
                         }
 
+                        @case ('file') {
+                          <input
+                            type="file"
+                            class="w-full"
+                            [id]="field.name"
+                            [attr.accept]="field.accept || null"
+                            (change)="onFieldInput(field, $any($event.target).files?.[0] || null)"
+                          />
+                        }
+
                         @case ('datetime') {
                           <p-datepicker
                             [iconDisplay]="'input'"
