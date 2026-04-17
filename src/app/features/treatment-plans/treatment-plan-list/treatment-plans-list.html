@@ -1,0 +1,40 @@
+<p-card styleClass="p-card-page">
+  <!-- <ng-template #header>
+    <h1 class="cdss-page-card-title">Treatment Plans</h1>
+  </ng-template> -->
+
+  <p-card styleClass="p-card-section">
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          <h2 class="cdss-section-card-title">Manage Treatment Plans</h2>
+        </div>
+
+        <div class="cdss-section-card-buttons">
+          <app-cdss-new-button
+            label="New Treatment Plan"
+            (click)="createTreatmentPlan()"
+          ></app-cdss-new-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <p-card styleClass="p-card-section-panel">
+      <app-cdss-table
+        [data]="data()"
+        [config]="config()"
+        [loading]="loading()"
+        [totalRecords]="totalRecords()"
+        (view)="onViewTreatmentPlan($event)"
+        (edit)="onEditTreatmentPlan($event)"
+        (lazyLoad)="onLazyLoad($event)"
+      >
+        <ng-template #actions let-item>
+          <app-cdss-delete-button (click)="deleteTreatmentPlan(item)"></app-cdss-delete-button>
+        </ng-template>
+      </app-cdss-table>
+    </p-card>
+  </p-card>
+</p-card>
+
+<p-confirmDialog></p-confirmDialog>
