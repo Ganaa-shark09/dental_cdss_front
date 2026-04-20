@@ -57,7 +57,7 @@ export class ReportsList {
     showViewButton: true,
     showEditButton: true,
     showDeleteButton: false,
-    scrollHeight: 'clamp(320px, 55vh, 420px)',
+    // scrollHeight: 'clamp(320px, 55vh, 420px)',
   }));
 
   constructor() {

@@ -218,7 +218,6 @@ export class ReportsForm {
         this.allTreatmentPlans.set(items);
         this.treatmentPlansLoading.set(false);
         this.filterDependentOptions(this.form.get('consultation_id')?.value || '');
-        console.log('Treatment plans response:', items);
       },
       error: () => {
         this.treatmentPlansLoading.set(false);
