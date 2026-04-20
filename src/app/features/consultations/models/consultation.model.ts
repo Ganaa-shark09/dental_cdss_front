@@ -11,6 +11,7 @@ export interface Consultation {
   appointment_date?: string;
 
   consultation_date?: string;
+  consultation_number?: string;
 
   chief_complaint?: string;
   symptoms?: string;
