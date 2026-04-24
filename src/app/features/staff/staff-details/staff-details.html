@@ -17,8 +17,8 @@
   </ng-template>
 
   <app-cdss-details
-    [title]="(member()?.first_name || '') + ' ' + (member()?.last_name || '')"
-    [subtitle]="member()?.email || ''"
+    [title]="(member()?.user_name || '')"
+    [subtitle]="member()?.user_email || ''"
     [rows]="detailRows()"
   ></app-cdss-details>
 </p-card>

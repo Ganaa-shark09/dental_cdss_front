@@ -38,10 +38,15 @@ export class StaffDetails {
     }
 
     return [
-      { label: 'First Name', value: member.first_name, type: 'text', fullWidth: false },
-      { label: 'Last Name', value: member.last_name, type: 'text', fullWidth: false },
-      { label: 'Email', value: member.email || '—', type: 'text', fullWidth: false },
-      { label: 'Phone', value: member.phone_number || '—', type: 'text', fullWidth: false },
+      { label: 'First Name', value: member.employee_id, type: 'text', fullWidth: false },
+      { label: 'Last Name', value: member.user_name, type: 'text', fullWidth: false },
+      { label: 'Email', value: member.user_email || '—', type: 'text', fullWidth: false },
+      {
+        label: 'years of experience',
+        value: member.years_of_experience,
+        type: 'text',
+        fullWidth: false,
+      },
       { label: 'Role', value: member.role || '—', type: 'text', fullWidth: false },
       {
         label: 'Specialization',

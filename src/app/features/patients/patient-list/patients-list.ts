@@ -10,12 +10,11 @@ import { Patient } from '../models/patient.model';
 import { CdssTable } from '../../../shared/components/table/cdss-table/cdss-table';
 import { CdssTableConfig } from '../../../shared/components/table/cdss-table/cdss-table.types';
 import { CdssNewButton } from '../../../shared/components/buttons/cdss-new-button/cdss-new-button';
-import { CdssDeleteButton } from '../../../shared/components/buttons/cdss-delete-button/cdss-delete-button';
 
 @Component({
   selector: 'app-patients-list',
   standalone: true,
-  imports: [CardModule, ConfirmDialogModule, CdssTable, CdssNewButton, CdssDeleteButton],
+  imports: [CardModule, ConfirmDialogModule, CdssTable, CdssNewButton],
   providers: [ConfirmationService],
   templateUrl: './patients-list.html',
   styleUrl: './patients-list.scss',

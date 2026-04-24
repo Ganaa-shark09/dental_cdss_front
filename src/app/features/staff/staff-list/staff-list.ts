@@ -10,12 +10,11 @@ import { Staff } from '../models/staff.model';
 import { CdssTable } from '../../../shared/components/table/cdss-table/cdss-table';
 import { CdssTableConfig } from '../../../shared/components/table/cdss-table/cdss-table.types';
 import { CdssNewButton } from '../../../shared/components/buttons/cdss-new-button/cdss-new-button';
-import { CdssDeleteButton } from '../../../shared/components/buttons/cdss-delete-button/cdss-delete-button';
 
 @Component({
   selector: 'app-staff-list',
   standalone: true,
-  imports: [CardModule, ConfirmDialogModule, CdssTable, CdssNewButton, CdssDeleteButton],
+  imports: [CardModule, ConfirmDialogModule, CdssTable, CdssNewButton],
   providers: [ConfirmationService],
   templateUrl: './staff-list.html',
   styleUrl: './staff-list.scss',
@@ -35,10 +34,10 @@ export class StaffList {
 
   tableConfig = computed<CdssTableConfig>(() => ({
     columns: [
-      { field: 'first_name', header: 'First Name', type: 'text', sortable: true },
-      { field: 'last_name', header: 'Last Name', type: 'text', sortable: true },
-      { field: 'email', header: 'Email', type: 'text', sortable: true },
-      { field: 'phone_number', header: 'Phone', type: 'text' },
+      { field: 'employee_id', header: 'Employee ID', type: 'text', sortable: true },
+      { field: 'user_name', header: 'Staff Name', type: 'text', sortable: true },
+      { field: 'user_email', header: 'Email', type: 'text', sortable: true },
+      { field: 'years_of_experience', header: 'Experience Years', type: 'text' },
       { field: 'role', header: 'Role', type: 'text', sortable: true },
       { field: 'specialization', header: 'Specialization', type: 'text' },
       { field: 'clinic_name', header: 'Clinic', type: 'text', sortable: true },
@@ -54,7 +53,6 @@ export class StaffList {
     dataKey: 'uuid',
     showViewButton: true,
     showEditButton: true,
-    showDeleteButton: false,
     enableSelection: false,
     lazy: true,
   }));
@@ -118,7 +116,7 @@ export class StaffList {
 
   deleteStaff(member: Staff): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${member.first_name} ${member.last_name}?`,
+      message: `Are you sure you want to delete ${member.user_name}?`,
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
