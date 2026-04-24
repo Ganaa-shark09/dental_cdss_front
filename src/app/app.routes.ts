@@ -69,6 +69,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/documents/documents.routes').then((m) => m.documentsRoutes),
       },
+      {
+        path: ROUTES.app.treatmentPlans,
+        loadChildren: () =>
+          import('./features/treatment-plans/treatment-plans.routes').then(
+            (m) => m.treatmentPlansRoutes,
+          ),
+      },
     ],
   },
   {
