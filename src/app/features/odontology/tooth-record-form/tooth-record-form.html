@@ -1,0 +1,7 @@
+<app-cdss-form
+  [config]="config()"
+  [loading]="saving()"
+  [disableOnInvalid]="false"
+  (submit)="save($event.rawValue)"
+  (back)="onBack()"
+></app-cdss-form>

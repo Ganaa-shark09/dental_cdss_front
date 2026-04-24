@@ -1,20 +1,17 @@
 <p-card styleClass="p-card-page">
   <!-- <ng-template #header>
-    <h1 class="cdss-page-card-title">CDSS History</h1>
+    <h1 class="cdss-page-card-title">Odontology</h1>
   </ng-template> -->
 
   <p-card styleClass="p-card-section">
     <ng-template #header>
       <div class="cdss-section-card-header">
         <div class="cdss-section-card-title-section">
-          <h2 class="cdss-section-card-title">CDSS Engines</h2>
+          <h2 class="cdss-section-card-title">Dental Charts</h2>
         </div>
 
         <div class="cdss-section-card-buttons">
-          <app-cdss-new-button
-            label="Analyze Consultation"
-            (click)="onAnalyze()"
-          ></app-cdss-new-button>
+          <app-cdss-new-button label="New Chart" (click)="onCreate()"></app-cdss-new-button>
         </div>
       </div>
     </ng-template>
@@ -24,10 +21,9 @@
         [data]="data()"
         [config]="config()"
         [loading]="loading()"
-        [totalRecords]="totalRecords()"
+        [totalRecords]="data().length"
         (view)="onView($event)"
         (edit)="onEdit($event)"
-        (lazyLoad)="onLazyLoad($event)"
       ></app-cdss-table>
     </p-card>
   </p-card>
