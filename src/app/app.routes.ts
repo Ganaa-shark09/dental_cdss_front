@@ -80,6 +80,11 @@ export const routes: Routes = [
         path: ROUTES.app.cdss,
         loadChildren: () => import('./features/cdss/cdss.routes').then((m) => m.cdssRoutes),
       },
+      {
+        path: ROUTES.app.reports,
+        loadChildren: () =>
+          import('./features/reports/reports.routes').then((m) => m.reportsRoutes),
+      },
     ],
   },
   {
