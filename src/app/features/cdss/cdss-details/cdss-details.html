@@ -1,0 +1,39 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <div class="cdss-section-card-header">
+      <div class="cdss-section-card-title-section">
+        <h1 class="cdss-page-card-title">CDSS Engine Details</h1>
+      </div>
+
+      <div class="cdss-section-card-buttons">
+        <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
+        <app-cdss-save-button
+          label="Edit"
+          severity="secondary"
+          (click)="onEdit()"
+        ></app-cdss-save-button>
+      </div>
+    </div>
+  </ng-template>
+
+  <app-cdss-details
+    [title]="data()?.consultation_number || 'CDSS Engine'"
+    [subtitle]="data()?.created_at || ''"
+    [rows]="rows()"
+  ></app-cdss-details>
+
+  <div class="mt-4">
+    <p-card styleClass="p-card-section">
+      <div class="cdss-section-card-title-section">
+        <h1 class="cdss-page-card-title">Recommendation Rows</h1>
+      </div>
+
+      <app-cdss-table
+        [data]="recommendationRows()"
+        [config]="recommendationTableConfig()"
+        [loading]="loading()"
+        [totalRecords]="recommendationRows().length"
+      ></app-cdss-table>
+    </p-card>
+  </div>
+</p-card>

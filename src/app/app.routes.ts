@@ -76,6 +76,10 @@ export const routes: Routes = [
             (m) => m.treatmentPlansRoutes,
           ),
       },
+      {
+        path: ROUTES.app.cdss,
+        loadChildren: () => import('./features/cdss/cdss.routes').then((m) => m.cdssRoutes),
+      },
     ],
   },
   {
