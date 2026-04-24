@@ -90,6 +90,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/audit-logs/audit-logs.routes').then((m) => m.auditLogsRoutes),
       },
+      {
+        path: ROUTES.app.odontology,
+        loadChildren: () =>
+          import('./features/odontology/odontology.routes').then((m) => m.odontologyRoutes),
+      },
     ],
   },
   {

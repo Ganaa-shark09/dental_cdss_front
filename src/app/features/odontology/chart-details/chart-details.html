@@ -1,0 +1,57 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <div class="cdss-section-card-header">
+      <div class="cdss-section-card-title-section">
+        <h1 class="cdss-page-card-title">Dental Chart Details</h1>
+      </div>
+
+      <div class="cdss-section-card-buttons">
+        <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
+        <app-cdss-save-button
+          label="Edit Chart"
+          severity="secondary"
+          (click)="onEditChart()"
+        ></app-cdss-save-button>
+        <app-cdss-save-button
+          label="Add Tooth Record"
+          (click)="onAddToothRecord()"
+        ></app-cdss-save-button>
+      </div>
+    </div>
+  </ng-template>
+
+  <app-cdss-details
+    [title]="chart()?.consultation_number || 'Dental Chart'"
+    [subtitle]="chart()?.created_at || ''"
+    [rows]="rows()"
+  ></app-cdss-details>
+
+  <div class="mt-4">
+    <p-card styleClass="p-card-section">
+      <ng-template #header>
+        <h2 class="cdss-section-card-title">Tooth Records</h2>
+      </ng-template>
+
+      <app-cdss-table
+        [data]="toothRecords()"
+        [config]="toothTableConfig()"
+        [loading]="loading()"
+        [totalRecords]="toothRecords().length"
+        (edit)="onEditToothRecord($event)"
+      ></app-cdss-table>
+    </p-card>
+  </div>
+
+  @if (showToothForm()) {
+    <div class="mt-4">
+      <p-card styleClass="p-card-section">
+        <app-tooth-record-form
+          [chartUuid]="chart()?.uuid || ''"
+          [toothRecord]="selectedToothRecord()"
+          (saved)="onToothSaved()"
+          (cancelled)="onToothCancelled()"
+        ></app-tooth-record-form>
+      </p-card>
+    </div>
+  }
+</p-card>
