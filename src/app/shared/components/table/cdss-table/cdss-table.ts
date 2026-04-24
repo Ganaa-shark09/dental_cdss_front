@@ -71,6 +71,10 @@ export class CdssTable {
     return this.config().dataKey || 'id';
   }
 
+  get scrollHeight(): string {
+    return this.config().scrollHeight || 'clamp(320px, 55vh, 340px)';
+  }
+
   get showPaginator(): boolean {
     return this.config().showPaginator ?? true;
   }
