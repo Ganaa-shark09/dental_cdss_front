@@ -1,0 +1,25 @@
+<p-card styleClass="p-card-page">
+  <p-card styleClass="p-card-section">
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          <h2 class="cdss-section-card-title">Manage Consultation</h2>
+        </div>
+
+        <div class="cdss-section-card-buttons">
+          <app-cdss-new-button label="New consultation" (click)="create()"></app-cdss-new-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <app-cdss-table
+      [data]="data()"
+      [config]="config()"
+      [loading]="loading()"
+      (view)="view($event)"
+      (edit)="edit($event)"
+    >
+      <ng-template #actions let-item> </ng-template>
+    </app-cdss-table>
+  </p-card>
+</p-card>

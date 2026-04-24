@@ -50,6 +50,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/appointments/appointments.routes').then((m) => m.appointmentsRoutes),
       },
+      {
+        path: ROUTES.app.consultations,
+        loadChildren: () =>
+          import('./features/consultations/consultations.routes').then(
+            (m) => m.consultationsRoutes,
+          ),
+      },
     ],
   },
   {
