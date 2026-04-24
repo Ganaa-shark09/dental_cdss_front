@@ -36,11 +36,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/clinics/clinics.routes').then((m) => m.clinicsRoutes),
       },
-      // {
-      //   path: ROUTES.app.patients,
-      //   loadChildren: () =>
-      //     import('./features/patients/patients.routes').then((m) => m.patientsRoutes),
-      // },
+      {
+        path: ROUTES.app.patients,
+        loadChildren: () =>
+          import('./features/patients/patients.routes').then((m) => m.patientsRoutes),
+      },
     ],
   },
   {
