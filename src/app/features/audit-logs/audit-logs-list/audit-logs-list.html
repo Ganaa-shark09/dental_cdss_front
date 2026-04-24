@@ -1,0 +1,26 @@
+<p-card styleClass="p-card-page">
+  <!-- <ng-template #header>
+    <h1 class="cdss-page-card-title">Audit Logs</h1>
+  </ng-template> -->
+
+  <p-card styleClass="p-card-section">
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          <h2 class="cdss-section-card-title">Check Audit Logs</h2>
+        </div>
+
+        <div class="cdss-section-card-buttons"></div>
+      </div>
+    </ng-template>
+
+    <p-card styleClass="p-card-section-panel mt-3">
+      <app-cdss-table
+        [data]="data()"
+        [config]="tableConfig()"
+        [loading]="loading()"
+        (view)="onView($event)"
+      ></app-cdss-table>
+    </p-card>
+  </p-card>
+</p-card>

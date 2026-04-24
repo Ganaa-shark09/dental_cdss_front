@@ -1,0 +1,16 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <div class="cdss-section-card-header">
+      <div class="cdss-section-card-title-section">
+        <h1 class="cdss-page-card-title">Clinic Details</h1>
+      </div>
+      <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
+    </div>
+  </ng-template>
+
+  <app-cdss-details
+    [title]="'Audit Log'"
+    [subtitle]="data()?.model_name || ''"
+    [rows]="rows()"
+  ></app-cdss-details>
+</p-card>
