@@ -16,7 +16,7 @@ import { CdssDeleteButton } from '../../../shared/components/buttons/cdss-delete
   selector: 'app-clinics-list',
   standalone: true,
   imports: [CardModule, ConfirmDialogModule, CdssTable, CdssNewButton, CdssDeleteButton],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService],
   templateUrl: './clinics-list.html',
   styleUrl: './clinics-list.scss',
 })
@@ -61,8 +61,10 @@ export class ClinicsList {
     this.loadClinics();
   }
 
-  loadClinics(): void {
-    this.loading.set(true);
+  loadClinics(showLoader = true): void {
+    if (showLoader) {
+      this.loading.set(true);
+    }
 
     this.clinicsService
       .getClinics({
@@ -84,6 +86,11 @@ export class ClinicsList {
         },
         error: () => {
           this.loading.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Load failed',
+            detail: 'Unable to load clinics.',
+          });
         },
       });
   }
@@ -92,7 +99,7 @@ export class ClinicsList {
     this.page.set((event.first ?? 0) / (event.rows ?? 10) + 1);
     this.pageSize.set(event.rows ?? 10);
     this.ordering.set((event as any).ordering || '');
-    this.loadClinics();
+    this.loadClinics(false);
   }
 
   createClinic(): void {
@@ -113,14 +120,24 @@ export class ClinicsList {
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+        this.loading.set(true);
+
         this.clinicsService.deleteClinic(clinic.uuid).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
               summary: 'Deleted',
-              detail: 'Clinic deleted successfully',
+              detail: 'Clinic deleted successfully.',
             });
-            this.loadClinics();
+            this.loadClinics(false);
+          },
+          error: () => {
+            this.loading.set(false);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Delete failed',
+              detail: 'Unable to delete clinic.',
+            });
           },
         });
       },

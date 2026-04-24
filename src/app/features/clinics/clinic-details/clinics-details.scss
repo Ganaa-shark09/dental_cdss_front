@@ -1,3 +1,7 @@
-:host {
-    display: block;
+:host ::ng-deep .p-datatable-tbody>tr {
+    transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .p-datatable-tbody>tr:hover>td {
+    background: var(--app-surface-muted);
 }

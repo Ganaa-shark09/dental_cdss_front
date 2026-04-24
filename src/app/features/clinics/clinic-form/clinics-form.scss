@@ -1,3 +1,7 @@
-:host {
-    display: block;
+.cdss-form-card {
+    overflow: hidden;
+}
+
+.cdss-form-group-block+.cdss-form-group-block {
+    margin-top: 0.5rem;
 }
