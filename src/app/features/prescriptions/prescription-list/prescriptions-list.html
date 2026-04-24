@@ -1,0 +1,40 @@
+<p-card styleClass="p-card-page">
+  <ng-template #header>
+    <h1 class="cdss-page-card-title">Prescriptions</h1>
+  </ng-template>
+
+  <p-card styleClass="p-card-section">
+    <ng-template #header>
+      <div class="cdss-section-card-header">
+        <div class="cdss-section-card-title-section">
+          <h2 class="cdss-section-card-title">Manage Prescriptions</h2>
+        </div>
+
+        <div class="cdss-section-card-buttons">
+          <app-cdss-new-button
+            label="New Prescription"
+            (click)="createPrescription()"
+          ></app-cdss-new-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <p-card styleClass="p-card-section-panel">
+      <app-cdss-table
+        [data]="data()"
+        [config]="config()"
+        [loading]="loading()"
+        [totalRecords]="totalRecords()"
+        (view)="onViewPrescription($event)"
+        (edit)="onEditPrescription($event)"
+        (lazyLoad)="onLazyLoad($event)"
+      >
+        <ng-template #actions let-item>
+          <app-cdss-delete-button (click)="deletePrescription(item)"></app-cdss-delete-button>
+        </ng-template>
+      </app-cdss-table>
+    </p-card>
+  </p-card>
+</p-card>
+
+<p-confirmDialog></p-confirmDialog>
