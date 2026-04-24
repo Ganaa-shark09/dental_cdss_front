@@ -184,6 +184,15 @@ export class CdssForm {
   }
 
   onFieldInput(field: CdssFormFieldConfig, value: unknown): void {
+    const control = this.getControl(field.name);
+
+    if (control instanceof FormControl) {
+      control.setValue(value);
+      control.markAsDirty();
+      control.markAsTouched();
+      control.updateValueAndValidity({ emitEvent: false });
+    }
+
     field.onChange?.(value, this.formGroup);
   }
 

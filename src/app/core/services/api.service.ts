@@ -38,4 +38,12 @@ export class ApiService {
   delete<T>(endpoint: string): Observable<T> {
     return this.http.delete<T>(`${this.apiUrl}/${endpoint}`);
   }
+
+  postFormData<T>(endpoint: string, body: FormData) {
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, body);
+  }
+
+  putFormData<T>(endpoint: string, body: FormData) {
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, body);
+  }
 }

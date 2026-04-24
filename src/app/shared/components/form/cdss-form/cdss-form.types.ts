@@ -7,6 +7,7 @@ export type CdssFieldType =
   | 'date'
   | 'time'
   | 'datetime'
+  | 'file'
   | 'select'
   | 'multi-select'
   | 'boolean'
@@ -52,6 +53,7 @@ export interface CdssFormFieldConfig {
 
   rows?: number;
   fullWidth?: boolean;
+  accept?: string;
 
   tags?: string[];
   tagsOutlined?: boolean;
