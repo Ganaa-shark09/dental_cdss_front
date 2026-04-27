@@ -55,4 +55,15 @@ export class OdontologyService {
       payload,
     );
   }
+
+  patchToothRecord(
+    chartUuid: string,
+    toothRecordUuid: string,
+    payload: Partial<ToothRecordPayload>,
+  ): Observable<ToothRecord> {
+    return this.api.patch<ToothRecord>(
+      `${this.endpoint}${chartUuid}/tooth-records/${toothRecordUuid}/`,
+      payload,
+    );
+  }
 }

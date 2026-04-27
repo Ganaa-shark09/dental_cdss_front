@@ -8,6 +8,18 @@
       <div class="cdss-section-card-buttons">
         <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
         <app-cdss-save-button
+          label="Print Prescription"
+          severity="success"
+          icon="pi pi-print"
+          (click)="onPrint()"
+        ></app-cdss-save-button>
+        <app-cdss-save-button
+          label="New Wizard"
+          severity="info"
+          icon="pi pi-plus"
+          (click)="onNewWizard()"
+        ></app-cdss-save-button>
+        <app-cdss-save-button
           label="Edit"
           severity="secondary"
           (click)="onEdit()"
@@ -21,6 +33,80 @@
     [subtitle]="data()?.created_at || ''"
     [rows]="rows()"
   ></app-cdss-details>
+
+  <!-- Per-Tooth Results -->
+  @if (perToothEntries().length > 0) {
+    <div class="mt-4">
+      <p-card styleClass="p-card-section">
+        <div class="cdss-section-card-title-section mb-3">
+          <h2 class="cdss-page-card-title">Per-Tooth Analysis Results</h2>
+        </div>
+
+        <div class="tooth-results-grid">
+          @for (entry of perToothEntries(); track entry.tooth) {
+            <div class="tooth-result-card">
+              <div class="tooth-result-header">
+                <span class="tooth-number">Tooth {{ entry.tooth }}</span>
+                @if (entry.result.confidence) {
+                  <p-tag
+                    [value]="entry.result.confidence"
+                    [severity]="confidenceSeverity(entry.result.confidence)"
+                  ></p-tag>
+                }
+              </div>
+
+              @if (entry.result.diagnosis) {
+                <p class="tooth-diagnosis">{{ entry.result.diagnosis }}</p>
+              }
+
+              @if (entry.result.icd) {
+                <span class="tooth-icd">ICD: {{ entry.result.icd }}</span>
+              }
+
+              @if (entry.result.treatment) {
+                <div class="tooth-section">
+                  <span class="tooth-section-label">Treatment Plan</span>
+                  <p class="tooth-section-value">{{ entry.result.treatment }}</p>
+                </div>
+              }
+
+              @if (entry.result.medication.length) {
+                <div class="tooth-section">
+                  <span class="tooth-section-label">Medications</span>
+                  @for (med of entry.result.medication; track med.name) {
+                    <div class="tooth-med-row">
+                      <strong>{{ med.name }}</strong>
+                      @if (med.dosage) { <span>{{ med.dosage }}</span> }
+                      @if (med.frequency) { <span>{{ med.frequency }}</span> }
+                      @if (med.duration) { <span>for {{ med.duration }}</span> }
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (entry.result.redFlags?.length) {
+                <div class="tooth-flags tooth-flags--red">
+                  <span class="tooth-flags-icon">⚠</span>
+                  @for (flag of entry.result.redFlags; track flag) {
+                    <span>{{ flag }}</span>
+                  }
+                </div>
+              }
+
+              @if (entry.result.safetyWarnings?.length) {
+                <div class="tooth-flags tooth-flags--warn">
+                  <span class="tooth-flags-icon">🛡</span>
+                  @for (warn of entry.result.safetyWarnings; track warn) {
+                    <span>{{ warn }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </p-card>
+    </div>
+  }
 
   <div class="mt-4">
     <p-card styleClass="p-card-section">

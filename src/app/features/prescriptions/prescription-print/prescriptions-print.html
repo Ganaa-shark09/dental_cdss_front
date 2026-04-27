@@ -1,0 +1,202 @@
+<!-- Screen controls (hidden during print) -->
+<div class="print-controls no-print">
+  <div class="controls-inner">
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Back"
+      severity="secondary"
+      (onClick)="back()"
+    ></p-button>
+    <p-button
+      icon="pi pi-print"
+      label="Print Prescription"
+      severity="primary"
+      [loading]="loading()"
+      (onClick)="print()"
+    ></p-button>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="print-loading">
+    <p-progressSpinner strokeWidth="4" />
+    <p>Loading prescription…</p>
+  </div>
+}
+
+@if (data()) {
+  <!-- Prescription Document (shown on screen and in print) -->
+  <div class="prescription-doc">
+    <!-- Clinic Header -->
+    <div class="rx-clinic-header">
+      <div class="rx-clinic-info">
+        <h1 class="rx-clinic-name">{{ data()!.clinic.name }}</h1>
+        @if (data()!.clinic.address) {
+          <p class="rx-clinic-address">{{ data()!.clinic.address }}</p>
+        }
+        @if (data()!.clinic.phone) {
+          <p class="rx-clinic-phone">📞 {{ data()!.clinic.phone }}</p>
+        }
+      </div>
+      <div class="rx-doc-info">
+        <h2 class="rx-doc-name">{{ data()!.doctor.name }}</h2>
+        @if (data()!.doctor.designation) {
+          <p class="rx-doc-designation">{{ data()!.doctor.designation }}</p>
+        }
+        @if (data()!.doctor.license_number) {
+          <p class="rx-doc-license">Reg. No: {{ data()!.doctor.license_number }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="rx-divider-thick"></div>
+
+    <!-- Patient Info Row -->
+    <div class="rx-patient-row">
+      <div class="rx-patient-info">
+        <div class="rx-info-item">
+          <span class="rx-info-label">Patient</span>
+          <span class="rx-info-value">{{ data()!.patient.full_name }}</span>
+        </div>
+        @if (data()!.patient.code) {
+          <div class="rx-info-item">
+            <span class="rx-info-label">Patient ID</span>
+            <span class="rx-info-value">{{ data()!.patient.code }}</span>
+          </div>
+        }
+        @if (data()!.patient.gender) {
+          <div class="rx-info-item">
+            <span class="rx-info-label">Gender</span>
+            <span class="rx-info-value">{{ data()!.patient.gender }}</span>
+          </div>
+        }
+        @if (data()!.patient.date_of_birth) {
+          <div class="rx-info-item">
+            <span class="rx-info-label">Age</span>
+            <span class="rx-info-value">{{ calculateAge(data()!.patient.date_of_birth) }}</span>
+          </div>
+        }
+        @if (data()!.patient.phone) {
+          <div class="rx-info-item">
+            <span class="rx-info-label">Phone</span>
+            <span class="rx-info-value">{{ data()!.patient.phone }}</span>
+          </div>
+        }
+      </div>
+      <div class="rx-date-info">
+        <div class="rx-info-item">
+          <span class="rx-info-label">Date</span>
+          <span class="rx-info-value">{{ data()!.date_issued || today() }}</span>
+        </div>
+        @if (data()!.consultation_number) {
+          <div class="rx-info-item">
+            <span class="rx-info-label">Consultation</span>
+            <span class="rx-info-value">{{ data()!.consultation_number }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="rx-divider"></div>
+
+    <!-- Diagnosis Section -->
+    @if (data()!.chief_complaint || data()!.provisional_diagnosis || data()!.final_diagnosis) {
+      <div class="rx-diagnosis-section">
+        @if (data()!.chief_complaint) {
+          <div class="rx-diagnosis-item">
+            <span class="rx-diag-label">Chief Complaint:</span>
+            <span class="rx-diag-value">{{ data()!.chief_complaint }}</span>
+          </div>
+        }
+        @if (data()!.provisional_diagnosis) {
+          <div class="rx-diagnosis-item">
+            <span class="rx-diag-label">Diagnosis:</span>
+            <span class="rx-diag-value">{{ data()!.provisional_diagnosis }}</span>
+          </div>
+        }
+        @if (data()!.final_diagnosis && data()!.final_diagnosis !== data()!.provisional_diagnosis) {
+          <div class="rx-diagnosis-item">
+            <span class="rx-diag-label">Final Diagnosis:</span>
+            <span class="rx-diag-value">{{ data()!.final_diagnosis }}</span>
+          </div>
+        }
+      </div>
+      <div class="rx-divider"></div>
+    }
+
+    <!-- Rx Symbol + Medications -->
+    <div class="rx-body">
+      <div class="rx-symbol-box">
+        <span class="rx-symbol">℞</span>
+      </div>
+
+      <div class="rx-medication-section">
+        @if (data()!.medication) {
+          <div class="rx-med-block">
+            @for (line of data()!.medication!.split('\n'); track line) {
+              @if (line.trim()) {
+                <p class="rx-med-line">{{ line }}</p>
+              }
+            }
+          </div>
+
+          @if (data()!.dosage || data()!.frequency || data()!.duration) {
+            <div class="rx-med-details">
+              @if (data()!.dosage) {
+                <span><strong>Dose:</strong> {{ data()!.dosage }}</span>
+              }
+              @if (data()!.frequency) {
+                <span><strong>Frequency:</strong> {{ data()!.frequency }}</span>
+              }
+              @if (data()!.duration) {
+                <span><strong>Duration:</strong> {{ data()!.duration }}</span>
+              }
+            </div>
+          }
+        } @else {
+          <p class="rx-empty">No medications prescribed.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Treatment Instructions -->
+    @if (data()!.treatment_instructions) {
+      <div class="rx-divider"></div>
+      <div class="rx-instructions">
+        <h4 class="rx-instructions-title">Treatment Instructions / Advice</h4>
+        @for (line of data()!.treatment_instructions!.split('\n'); track line) {
+          @if (line.trim()) {
+            <p class="rx-instruction-line">{{ line }}</p>
+          }
+        }
+      </div>
+    }
+
+    <!-- Notes -->
+    @if (data()!.notes) {
+      <div class="rx-notes">
+        <strong>Notes:</strong> {{ data()!.notes }}
+      </div>
+    }
+
+    <div class="rx-divider"></div>
+
+    <!-- Footer / Signature -->
+    <div class="rx-footer">
+      <div class="rx-footer-advice">
+        <p><strong>⚠ Important:</strong> Take medications as prescribed. Do not self-medicate.</p>
+        <p>Follow up as advised. Contact clinic if symptoms worsen.</p>
+      </div>
+      <div class="rx-signature-block">
+        <div class="rx-sig-line"></div>
+        <p class="rx-sig-name">{{ data()!.doctor.name }}</p>
+        @if (data()!.doctor.designation) {
+          <p class="rx-sig-designation">{{ data()!.doctor.designation }}</p>
+        }
+        <p class="rx-sig-date">Date: {{ data()!.date_issued || today() }}</p>
+      </div>
+    </div>
+  </div>
+}
+
+<p-toast></p-toast>

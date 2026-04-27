@@ -1,3 +1,97 @@
 :host {
     display: block;
 }
+
+.tooth-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.tooth-result-card {
+  border: 1px solid var(--p-surface-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--p-surface-card, #fff);
+}
+
+.tooth-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tooth-number {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--app-primary, #1a3a6c);
+}
+
+.tooth-diagnosis {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.25rem 0;
+}
+
+.tooth-icd {
+  font-size: 0.78rem;
+  color: #888;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.tooth-section {
+  margin-top: 0.6rem;
+}
+
+.tooth-section-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.tooth-section-value {
+  font-size: 0.85rem;
+  color: #444;
+  margin: 0;
+}
+
+.tooth-med-row {
+  font-size: 0.85rem;
+  color: #333;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+
+.tooth-flags {
+  margin-top: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+
+  &--red {
+    background: #fff5f5;
+    border-left: 3px solid #e53e3e;
+    color: #c53030;
+  }
+
+  &--warn {
+    background: #fffbeb;
+    border-left: 3px solid #d69e2e;
+    color: #92400e;
+  }
+}
+
+.tooth-flags-icon {
+  font-size: 1rem;
+}

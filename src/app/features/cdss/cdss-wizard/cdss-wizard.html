@@ -1,0 +1,877 @@
+<div class="wizard-container">
+  <!-- Wizard Header / Step Indicator -->
+  <div class="wizard-header">
+    <div class="wizard-steps">
+      @for (step of STEPS; track $index) {
+        <div
+          class="wizard-step"
+          [class.active]="currentStep() === $index"
+          [class.completed]="currentStep() > $index"
+          [class.clickable]="$index < currentStep()"
+          (click)="goToStep($index)"
+        >
+          <div class="step-circle">
+            @if (currentStep() > $index) {
+              <i class="pi pi-check"></i>
+            } @else {
+              <i [class]="step.icon"></i>
+            }
+          </div>
+          <span class="step-label">{{ step.label }}</span>
+        </div>
+        @if ($index < STEPS.length - 1) {
+          <div class="step-connector" [class.filled]="currentStep() > $index"></div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  @if (schemaLoading()) {
+    <div class="wizard-loading">
+      <p-progressSpinner strokeWidth="4" />
+      <p>Loading clinical schema…</p>
+    </div>
+  }
+
+  <!-- Step Content -->
+  <div class="wizard-body">
+
+    <!-- STEP 0: Select Consultation -->
+    @if (currentStep() === 0) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-file step-icon"></i>
+            <div>
+              <h2>Select Consultation</h2>
+              <p>Choose the consultation to analyze with CDSS</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          @if (consultationsLoading()) {
+            <div class="loading-inline"><p-progressSpinner strokeWidth="4" [style]="{width:'32px', height:'32px'}" /></div>
+          } @else {
+            <div class="field-group">
+              <label class="field-label">Consultation <span class="required">*</span></label>
+              <p-select
+                [options]="consultationOptions()"
+                [ngModel]="selectedConsultationId()"
+                (ngModelChange)="onConsultationChange($event)"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select a consultation..."
+                [filter]="true"
+                filterPlaceholder="Search consultations..."
+                styleClass="w-full"
+              ></p-select>
+            </div>
+
+            @if (selectedConsultation()) {
+              <div class="consultation-preview">
+                <div class="preview-row">
+                  <span class="preview-label">Patient</span>
+                  <span class="preview-value">{{ selectedConsultation()?.patient_name || '—' }}</span>
+                </div>
+                <div class="preview-row">
+                  <span class="preview-label">Date</span>
+                  <span class="preview-value">{{ selectedConsultation()?.consultation_date || '—' }}</span>
+                </div>
+                <div class="preview-row">
+                  <span class="preview-label">Status</span>
+                  <span class="preview-value">{{ selectedConsultation()?.status || '—' }}</span>
+                </div>
+                <div class="preview-row">
+                  <span class="preview-label">Chief Complaint</span>
+                  <span class="preview-value">{{ selectedConsultation()?.chief_complaint || '—' }}</span>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 1: Medical History -->
+    @if (currentStep() === 1) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-heart step-icon"></i>
+            <div>
+              <h2>Medical History</h2>
+              <p>Select applicable conditions, habits, allergies and past dental history</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          @if (schema()) {
+            <!-- Systemic Conditions -->
+            <div class="chip-section">
+              <h3 class="chip-section-title">Systemic Conditions</h3>
+              <div class="chip-grid">
+                @for (item of schema()!.section1_medical_history.systemic_conditions; track item) {
+                  <button
+                    type="button"
+                    class="chip-btn"
+                    [class.selected]="selectedSystemicConditions().includes(item)"
+                    (click)="toggleSystemicCondition(item)"
+                  >{{ item }}</button>
+                }
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Habits -->
+            <div class="chip-section">
+              <h3 class="chip-section-title">Habits</h3>
+              <div class="chip-grid">
+                @for (item of schema()!.section1_medical_history.habits; track item) {
+                  <button
+                    type="button"
+                    class="chip-btn"
+                    [class.selected]="selectedHabits().includes(item)"
+                    (click)="toggleHabit(item)"
+                  >{{ item }}</button>
+                }
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Allergies -->
+            <div class="chip-section">
+              <h3 class="chip-section-title">Known Allergies</h3>
+              <div class="chip-grid">
+                @for (item of schema()!.section1_medical_history.allergies; track item) {
+                  <button
+                    type="button"
+                    class="chip-btn chip-btn--danger"
+                    [class.selected]="selectedAllergies().includes(item)"
+                    (click)="toggleAllergy(item)"
+                  >{{ item }}</button>
+                }
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Past Dental History -->
+            <div class="chip-section">
+              <h3 class="chip-section-title">Past Dental History</h3>
+              <div class="chip-grid">
+                @for (item of schema()!.section1_medical_history.past_dental_history; track item) {
+                  <button
+                    type="button"
+                    class="chip-btn chip-btn--info"
+                    [class.selected]="selectedPastDentalHistory().includes(item)"
+                    (click)="togglePastDental(item)"
+                  >{{ item }}</button>
+                }
+              </div>
+            </div>
+
+            <!-- Summary -->
+            @if (selectedSystemicConditions().length || selectedHabits().length || selectedAllergies().length || selectedPastDentalHistory().length) {
+              <div class="selection-summary">
+                <h4>Selected:</h4>
+                @if (selectedSystemicConditions().length) {
+                  <p><strong>Systemic:</strong> {{ selectedSystemicConditions().join(', ') }}</p>
+                }
+                @if (selectedHabits().length) {
+                  <p><strong>Habits:</strong> {{ selectedHabits().join(', ') }}</p>
+                }
+                @if (selectedAllergies().length) {
+                  <p><strong>Allergies:</strong> {{ selectedAllergies().join(', ') }}</p>
+                }
+                @if (selectedPastDentalHistory().length) {
+                  <p><strong>Past Dental:</strong> {{ selectedPastDentalHistory().join(', ') }}</p>
+                }
+              </div>
+            }
+          } @else {
+            <p class="text-muted">Schema not available. Medical history will be skipped.</p>
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 2: Chief Complaint / Tooth Selection -->
+    @if (currentStep() === 2) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-comment step-icon"></i>
+            <div>
+              <h2>Chief Complaint — Tooth Selection</h2>
+              <p>Click on affected teeth to select them, then add complaints per tooth</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          <!-- Tooth Chart -->
+          <div class="tooth-chart">
+            <div class="chart-label-row">
+              <span class="chart-label">Upper Right (UR)</span>
+              <span class="chart-divider">|</span>
+              <span class="chart-label">Upper Left (UL)</span>
+            </div>
+            <div class="tooth-row">
+              @for (tooth of upperRight; track tooth) {
+                <button
+                  type="button"
+                  class="tooth-btn"
+                  [class.selected]="isToothSelected(tooth)"
+                  [class.active-tab]="activeToothTab() === tooth"
+                  (click)="toggleTooth(tooth)"
+                  [title]="'Tooth ' + tooth"
+                >
+                  <span class="tooth-num">{{ tooth }}</span>
+                  @if (isToothSelected(tooth)) {
+                    <span class="tooth-dot"></span>
+                  }
+                </button>
+              }
+              <div class="chart-midline"></div>
+              @for (tooth of upperLeft; track tooth) {
+                <button
+                  type="button"
+                  class="tooth-btn"
+                  [class.selected]="isToothSelected(tooth)"
+                  [class.active-tab]="activeToothTab() === tooth"
+                  (click)="toggleTooth(tooth)"
+                  [title]="'Tooth ' + tooth"
+                >
+                  <span class="tooth-num">{{ tooth }}</span>
+                  @if (isToothSelected(tooth)) {
+                    <span class="tooth-dot"></span>
+                  }
+                </button>
+              }
+            </div>
+            <div class="chart-arch-label">
+              <span>——————— Upper Arch ———————</span>
+            </div>
+            <div class="chart-arch-label">
+              <span>——————— Lower Arch ———————</span>
+            </div>
+            <div class="tooth-row">
+              @for (tooth of lowerRight; track tooth) {
+                <button
+                  type="button"
+                  class="tooth-btn"
+                  [class.selected]="isToothSelected(tooth)"
+                  [class.active-tab]="activeToothTab() === tooth"
+                  (click)="toggleTooth(tooth)"
+                  [title]="'Tooth ' + tooth"
+                >
+                  <span class="tooth-num">{{ tooth }}</span>
+                  @if (isToothSelected(tooth)) {
+                    <span class="tooth-dot"></span>
+                  }
+                </button>
+              }
+              <div class="chart-midline"></div>
+              @for (tooth of lowerLeft; track tooth) {
+                <button
+                  type="button"
+                  class="tooth-btn"
+                  [class.selected]="isToothSelected(tooth)"
+                  [class.active-tab]="activeToothTab() === tooth"
+                  (click)="toggleTooth(tooth)"
+                  [title]="'Tooth ' + tooth"
+                >
+                  <span class="tooth-num">{{ tooth }}</span>
+                  @if (isToothSelected(tooth)) {
+                    <span class="tooth-dot"></span>
+                  }
+                </button>
+              }
+            </div>
+            <div class="chart-label-row">
+              <span class="chart-label">Lower Right (LR)</span>
+              <span class="chart-divider">|</span>
+              <span class="chart-label">Lower Left (LL)</span>
+            </div>
+          </div>
+
+          <!-- Selected teeth tabs + complaints -->
+          @if (selectedTeeth().length > 0) {
+            <div class="tooth-complaint-area">
+              <!-- Tooth tabs -->
+              <div class="tooth-tabs">
+                @for (tooth of selectedTeeth(); track tooth) {
+                  <button
+                    type="button"
+                    class="tooth-tab"
+                    [class.active]="activeToothTab() === tooth"
+                    (click)="setActiveToothTab(tooth)"
+                  >
+                    Tooth {{ tooth }}
+                    @if (toothComplaints()[tooth]?.complaint_codes?.length) {
+                      <span class="tab-badge">{{ toothComplaints()[tooth].complaint_codes.length }}</span>
+                    }
+                  </button>
+                }
+              </div>
+
+              <!-- Complaint panel for active tooth -->
+              @if (activeToothTab() && schema()) {
+                <div class="complaint-panel">
+                  <h3>Tooth {{ activeToothTab() }} — Select Complaints</h3>
+
+                  @for (entry of sectionComplaintsEntries(); track entry.dept) {
+                    <div class="dept-complaints">
+                      <h4 class="dept-title">{{ departmentLabel(entry.dept) }}</h4>
+                      <div class="chip-grid">
+                        @for (code of entry.codes; track code.code) {
+                          <button
+                            type="button"
+                            class="chip-btn chip-btn--primary"
+                            [class.selected]="isComplaintSelected(activeToothTab(), code.code)"
+                            (click)="toggleComplaint(activeToothTab(), code, entry.dept)"
+                          >{{ code.label }}</button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <p-divider></p-divider>
+
+                  <!-- Duration and Severity per tooth -->
+                  <div class="tooth-meta-row">
+                    <div class="field-group">
+                      <label class="field-label">Duration</label>
+                      <p-select
+                        [options]="schema()!.section1_medical_history.duration_options"
+                        [ngModel]="toothComplaints()[activeToothTab()]?.duration || ''"
+                        (ngModelChange)="setToothDuration(activeToothTab(), $event)"
+                        placeholder="Select duration..."
+                        styleClass="w-full"
+                      ></p-select>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Severity</label>
+                      <p-select
+                        [options]="schema()!.section1_medical_history.severity_options"
+                        [ngModel]="toothComplaints()[activeToothTab()]?.severity || ''"
+                        (ngModelChange)="setToothSeverity(activeToothTab(), $event)"
+                        placeholder="Select severity..."
+                        styleClass="w-full"
+                      ></p-select>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-hint">
+              <i class="pi pi-info-circle"></i>
+              <span>Click on the tooth chart above to select affected teeth</span>
+            </div>
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 3: Clinical Examination -->
+    @if (currentStep() === 3) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-search step-icon"></i>
+            <div>
+              <h2>Clinical Examination</h2>
+              <p>Record clinical findings for each affected tooth</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          @for (tooth of selectedTeeth(); track tooth) {
+            <div class="exam-tooth-section">
+              <h3 class="exam-tooth-title">
+                <i class="pi pi-circle-fill"></i>
+                Tooth {{ tooth }}
+                <span class="exam-dept-tags">
+                  @for (dept of departmentsForTooth(tooth); track dept) {
+                    <p-tag [value]="departmentLabel(dept)" severity="info"></p-tag>
+                  }
+                </span>
+              </h3>
+
+              @if (examFieldsForTooth(tooth).length > 0) {
+                <div class="exam-fields-grid">
+                  @for (field of examFieldsForTooth(tooth); track field.key) {
+                    <div class="exam-field">
+                      <label class="field-label">{{ field.label }}</label>
+
+                      @if (field.type === 'select' && field.options) {
+                        <p-select
+                          [options]="field.options"
+                          [ngModel]="getExamField(tooth, field.key)"
+                          (ngModelChange)="setExamField(tooth, field.key, $event)"
+                          placeholder="Select..."
+                          styleClass="w-full"
+                        ></p-select>
+                      } @else if (field.type === 'boolean') {
+                        <div class="bool-field">
+                          <button
+                            type="button"
+                            class="bool-btn"
+                            [class.selected]="getExamField(tooth, field.key) === true || getExamField(tooth, field.key) === 'true'"
+                            (click)="setExamField(tooth, field.key, true)"
+                          >Yes</button>
+                          <button
+                            type="button"
+                            class="bool-btn"
+                            [class.selected]="getExamField(tooth, field.key) === false || getExamField(tooth, field.key) === 'false'"
+                            (click)="setExamField(tooth, field.key, false)"
+                          >No</button>
+                        </div>
+                      } @else {
+                        <input
+                          class="text-input"
+                          type="text"
+                          [ngModel]="getExamField(tooth, field.key)"
+                          (ngModelChange)="setExamField(tooth, field.key, $event)"
+                          [placeholder]="field.label"
+                        />
+                      }
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-muted">No specific exam fields for this tooth's complaints.</p>
+              }
+            </div>
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 4: Analysis -->
+    @if (currentStep() === 4) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-cpu step-icon"></i>
+            <div>
+              <h2>CDSS Analysis</h2>
+              <p>Run the Clinical Decision Support System engine</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          @if (!cdssEngine()) {
+            <!-- Pre-analysis summary -->
+            <div class="analysis-summary">
+              <h3>Ready to Analyze</h3>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span class="summary-label">Consultation</span>
+                  <span class="summary-value">{{ selectedConsultation()?.consultation_number || selectedConsultationId() }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Patient</span>
+                  <span class="summary-value">{{ selectedConsultation()?.patient_name || '—' }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Teeth Analyzed</span>
+                  <span class="summary-value">{{ selectedTeeth().join(', ') }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Systemic Conditions</span>
+                  <span class="summary-value">{{ selectedSystemicConditions().join(', ') || 'None' }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Allergies</span>
+                  <span class="summary-value">{{ selectedAllergies().join(', ') || 'None' }}</span>
+                </div>
+              </div>
+
+              <div class="departments-preview">
+                <h4>Departments to be activated:</h4>
+                <div class="chip-grid">
+                  @for (dept of activeDepartments(); track dept) {
+                    <span class="dept-chip">{{ departmentLabel(dept) }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            @if (analyzing()) {
+              <div class="analyzing-state">
+                <p-progressSpinner strokeWidth="4" />
+                <p>Running CDSS Universal Brain analysis…<br><small>This may take a few seconds</small></p>
+              </div>
+            } @else {
+              <div class="analyze-actions">
+                <p-button
+                  label="Run CDSS Analysis"
+                  icon="pi pi-cpu"
+                  severity="primary"
+                  (onClick)="runAnalysis()"
+                ></p-button>
+              </div>
+            }
+          } @else {
+            <div class="analysis-complete">
+              <i class="pi pi-check-circle success-icon"></i>
+              <p>Analysis completed successfully!</p>
+              <p-button
+                label="View Results"
+                icon="pi pi-arrow-right"
+                (onClick)="nextStep()"
+              ></p-button>
+            </div>
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 5: Results -->
+    @if (currentStep() === 5) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-chart-bar step-icon"></i>
+            <div>
+              <h2>CDSS Analysis Results</h2>
+              <p>Per-tooth diagnosis, treatment plan and medications</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+          @if (cdssEngine()) {
+            <!-- High-level summary -->
+            <div class="result-summary-bar">
+              <div class="result-summary-item">
+                <span class="rs-label">Consultation</span>
+                <span class="rs-value">{{ cdssEngine()?.consultation_number }}</span>
+              </div>
+              <div class="result-summary-item">
+                <span class="rs-label">Risk Score</span>
+                <span class="rs-value">{{ cdssEngine()?.risk_score }}</span>
+              </div>
+              <div class="result-summary-item">
+                <span class="rs-label">Department</span>
+                <span class="rs-value">{{ cdssEngine()?.department_display || cdssEngine()?.department || '—' }}</span>
+              </div>
+            </div>
+
+            <!-- Alerts -->
+            @if (cdssEngine()?.alerts?.length) {
+              <div class="alert-box">
+                <h4><i class="pi pi-exclamation-triangle"></i> Clinical Alerts</h4>
+                @for (alert of cdssEngine()!.alerts; track alert) {
+                  <p>{{ alert }}</p>
+                }
+              </div>
+            }
+
+            <!-- Per-tooth results -->
+            @if (toothResultEntries().length > 0) {
+              @for (entry of toothResultEntries(); track entry.tooth) {
+                <div class="tooth-result-card">
+                  <div class="tooth-result-header">
+                    <h3>Tooth {{ entry.tooth }}</h3>
+                    <div class="result-badges">
+                      <p-tag [value]="entry.result.icd" severity="secondary"></p-tag>
+                      <p-tag
+                        [value]="entry.result.confidence"
+                        [severity]="getConfidenceClass(entry.result.confidence)"
+                      ></p-tag>
+                    </div>
+                  </div>
+
+                  <div class="result-detail-grid">
+                    <div class="result-section">
+                      <h4>Diagnosis</h4>
+                      <p class="diagnosis-text">{{ entry.result.diagnosis }}</p>
+                    </div>
+
+                    @if (entry.result.reasoning?.explanation) {
+                      <div class="result-section full-width">
+                        <h4>Clinical Reasoning</h4>
+                        <p class="reasoning-text">{{ entry.result.reasoning!.explanation }}</p>
+                      </div>
+                    }
+
+                    @if (entry.result.treatment.length) {
+                      <div class="result-section">
+                        <h4>Treatment Plan</h4>
+                        <ul class="result-list">
+                          @for (t of entry.result.treatment; track t) {
+                            <li>{{ t }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+
+                    @if (entry.result.medication.length) {
+                      <div class="result-section">
+                        <h4>Medications</h4>
+                        <div class="medication-table">
+                          @for (med of entry.result.medication; track med.name) {
+                            <div class="med-row">
+                              <span class="med-name">{{ med.name }}</span>
+                              <span class="med-detail">{{ med.dosage }}</span>
+                              <span class="med-detail">{{ med.frequency }}</span>
+                              <span class="med-detail">{{ med.duration }}</span>
+                              @if (med.note) {
+                                <span class="med-note">{{ med.note }}</span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    @if (entry.result.redFlags?.length) {
+                      <div class="result-section full-width">
+                        <h4><i class="pi pi-flag text-danger"></i> Red Flags</h4>
+                        <ul class="result-list red-flags">
+                          @for (flag of entry.result.redFlags; track flag) {
+                            <li>{{ flag }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+
+                    @if (entry.result.safetyWarnings?.length) {
+                      <div class="result-section full-width">
+                        <h4><i class="pi pi-shield text-warn"></i> Safety Warnings</h4>
+                        <ul class="result-list warn-flags">
+                          @for (w of entry.result.safetyWarnings; track w) {
+                            <li>{{ w }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            } @else {
+              <!-- Fallback to legacy recommendations -->
+              @if (cdssEngine()?.recommendations?.length) {
+                <div class="legacy-results">
+                  <h3>Recommendations</h3>
+                  @for (rec of cdssEngine()!.recommendations; track rec) {
+                    <p>• {{ rec }}</p>
+                  }
+                </div>
+              }
+              @if (cdssEngine()?.diagnosis_assistance) {
+                <div class="legacy-results">
+                  <h3>Diagnosis Assistance</h3>
+                  <p>{{ cdssEngine()!.diagnosis_assistance }}</p>
+                </div>
+              }
+            }
+          }
+        </div>
+      </p-card>
+    }
+
+    <!-- STEP 6: Print / Prescription -->
+    @if (currentStep() === 6) {
+      <p-card styleClass="p-card-section">
+        <ng-template #header>
+          <div class="step-header">
+            <i class="pi pi-print step-icon"></i>
+            <div>
+              <h2>Prescription Summary</h2>
+              <p>Review findings and medications, then open the full printable prescription</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="step-content">
+
+          <!-- Patient / Consultation Summary Row -->
+          <div class="rx-summary-header">
+            <div class="rx-summary-field">
+              <span class="rx-summary-label">Patient</span>
+              <span class="rx-summary-value">{{ selectedConsultation()?.patient_name || '—' }}</span>
+            </div>
+            <div class="rx-summary-field">
+              <span class="rx-summary-label">Consultation</span>
+              <span class="rx-summary-value">{{ selectedConsultation()?.consultation_number || '—' }}</span>
+            </div>
+            <div class="rx-summary-field">
+              <span class="rx-summary-label">Date</span>
+              <span class="rx-summary-value">{{ today() }}</span>
+            </div>
+          </div>
+
+          <!-- Per-tooth diagnoses -->
+          @if (toothResultEntries().length > 0) {
+            <div class="rx-findings-block">
+              <div class="rx-block-title">Dental Findings</div>
+              <table class="rx-findings-table">
+                <thead>
+                  <tr>
+                    <th>Tooth</th>
+                    <th>Diagnosis</th>
+                    <th>ICD</th>
+                    <th>Confidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (entry of toothResultEntries(); track entry.tooth) {
+                    <tr>
+                      <td class="tooth-cell">{{ entry.tooth }}</td>
+                      <td>{{ entry.result.diagnosis }}</td>
+                      <td class="icd-cell">{{ entry.result.icd }}</td>
+                      <td>
+                        <p-tag
+                          [value]="entry.result.confidence"
+                          [severity]="getConfidenceClass(entry.result.confidence)"
+                        ></p-tag>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          <!-- Medications -->
+          <div class="rx-meds-block">
+            <div class="rx-block-title">
+              <span class="rx-symbol-inline">℞</span> Medications
+            </div>
+            @if (allMedications().length > 0) {
+              <table class="rx-meds-table">
+                <thead>
+                  <tr>
+                    <th>Tooth</th>
+                    <th>Medication</th>
+                    <th>Dose</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of allMedications(); track item.med.name + item.tooth) {
+                    <tr>
+                      <td class="tooth-cell">{{ item.tooth }}</td>
+                      <td class="med-name-cell">{{ item.med.name }}</td>
+                      <td>{{ item.med.dosage }}</td>
+                      <td>{{ item.med.frequency }}</td>
+                      <td>{{ item.med.duration }}</td>
+                      <td class="note-cell">{{ item.med.note || '—' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            } @else {
+              <p class="rx-empty-note">No medications in the analysis results.</p>
+            }
+          </div>
+
+          <!-- Treatment Plan -->
+          @if (toothResultEntries().length > 0) {
+            <div class="rx-treatment-block">
+              <div class="rx-block-title">Treatment Plan</div>
+              @for (entry of toothResultEntries(); track entry.tooth) {
+                @if (entry.result.treatment.length > 0) {
+                  <div class="rx-treatment-row">
+                    <span class="rx-treatment-tooth">Tooth {{ entry.tooth }}</span>
+                    <span class="rx-treatment-steps">{{ entry.result.treatment.join(' → ') }}</span>
+                  </div>
+                }
+              }
+            </div>
+          }
+
+          <!-- Action Buttons -->
+          <div class="print-actions">
+            <p-button
+              label="Open Print Prescription"
+              icon="pi pi-print"
+              severity="primary"
+              (onClick)="printPage()"
+            ></p-button>
+
+            @if (!prescriptionCreated()) {
+              <p-button
+                label="Save as Prescription"
+                icon="pi pi-save"
+                severity="secondary"
+                [loading]="creatingPrescription()"
+                (onClick)="createPrescriptionFromResults()"
+              ></p-button>
+            } @else {
+              <p-button
+                label="View Saved Prescription"
+                icon="pi pi-external-link"
+                severity="success"
+                (onClick)="viewPrescription()"
+              ></p-button>
+            }
+
+            <p-button
+              label="View CDSS Analysis"
+              icon="pi pi-chart-bar"
+              severity="info"
+              (onClick)="viewCdssDetails()"
+            ></p-button>
+          </div>
+
+        </div>
+      </p-card>
+    }
+  </div>
+
+  <!-- Wizard Footer Navigation -->
+  <div class="wizard-footer no-print">
+    <p-button
+      label="Back"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [disabled]="!canGoPrev()"
+      (onClick)="goPrev()"
+    ></p-button>
+
+    <p-button
+      label="Cancel"
+      severity="danger"
+      [outlined]="true"
+      (onClick)="goBack()"
+    ></p-button>
+
+    @if (currentStep() < STEPS.length - 1) {
+      @if (currentStep() === 4 && !cdssEngine()) {
+        <p-button
+          label="Skip Examination & Analyze"
+          icon="pi pi-forward"
+          severity="warn"
+          (onClick)="runAnalysis()"
+          [loading]="analyzing()"
+        ></p-button>
+      } @else {
+        <p-button
+          label="{{ currentStep() === STEPS.length - 2 ? 'Proceed to Print' : 'Next' }}"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          severity="primary"
+          [disabled]="!canGoNext() || loading() || saving() || analyzing()"
+          [loading]="loading() || saving()"
+          (onClick)="goNext()"
+        ></p-button>
+      }
+    }
+  </div>
+</div>
+
+<p-toast></p-toast>

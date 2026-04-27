@@ -1,10 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
 import { MessageService } from 'primeng/api';
 
 import { CdssService } from '../services/cdss.service';
-import { CdssEngine, CdssRecommendationRow } from '../models/cdss-engine.model';
+import { CdssEngine, CdssRecommendationRow, PerToothResult } from '../models/cdss-engine.model';
 import {
   CdssDetails as SharedCdssDetails,
   CdssDetailRow,
@@ -17,7 +20,7 @@ import { CdssTableConfig } from '../../../shared/components/table/cdss-table/cds
 @Component({
   selector: 'app-cdss-details-page',
   standalone: true,
-  imports: [CardModule, SharedCdssDetails, CdssBackButton, CdssSaveButton, CdssTable],
+  imports: [CommonModule, CardModule, TagModule, DividerModule, SharedCdssDetails, CdssBackButton, CdssSaveButton, CdssTable],
   templateUrl: './cdss-details.html',
   styleUrl: './cdss-details.scss',
 })
@@ -30,6 +33,12 @@ export class CdssDetails {
   data = signal<CdssEngine | null>(null);
   recommendationRows = signal<CdssRecommendationRow[]>([]);
   loading = signal(false);
+
+  perToothEntries = computed<Array<{ tooth: string; result: PerToothResult }>>(() => {
+    const d = this.data();
+    if (!d?.per_tooth_results) return [];
+    return Object.entries(d.per_tooth_results).map(([tooth, result]) => ({ tooth, result }));
+  });
 
   rows = computed<CdssDetailRow[]>(() => {
     const d = this.data();
@@ -136,5 +145,23 @@ export class CdssDetails {
   onEdit(): void {
     const id = this.route.snapshot.paramMap.get('uuid')!;
     this.router.navigate(['/cdss', id, 'edit']);
+  }
+
+  onNewWizard(): void {
+    this.router.navigate(['/cdss/wizard']);
+  }
+
+  onPrint(): void {
+    const id = this.route.snapshot.paramMap.get('uuid')!;
+    this.router.navigate(['/cdss', id, 'print']);
+  }
+
+  confidenceSeverity(score?: string): 'success' | 'info' | 'warn' | 'danger' {
+    switch (score?.toUpperCase()) {
+      case 'HIGH': return 'success';
+      case 'MODERATE': return 'info';
+      case 'LOW': return 'warn';
+      default: return 'danger';
+    }
   }
 }

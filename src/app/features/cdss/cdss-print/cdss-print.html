@@ -1,0 +1,278 @@
+<!-- Screen controls (hidden during print) -->
+<div class="print-controls no-print">
+  <div class="controls-inner">
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Back"
+      severity="secondary"
+      (onClick)="back()"
+    ></p-button>
+    <p-button
+      icon="pi pi-print"
+      label="Print Prescription"
+      (onClick)="print()"
+    ></p-button>
+  </div>
+</div>
+
+@if (loading()) {
+  <div class="print-loading no-print">
+    <p-progressSpinner strokeWidth="4" />
+    <p>Loading prescription…</p>
+  </div>
+}
+
+@if (data()) {
+  <div class="prescription-doc">
+
+    <!-- ═══ CLINIC HEADER ═══ -->
+    <div class="rx-clinic-header">
+      <div class="rx-clinic-info">
+        <h1 class="rx-clinic-name">{{ data()!.clinic_name || 'Dental Clinic' }}</h1>
+        @if (data()!.clinic_address) {
+          <p class="rx-clinic-sub">{{ data()!.clinic_address }}</p>
+        }
+        @if (data()!.clinic_phone) {
+          <p class="rx-clinic-sub">Tel: {{ data()!.clinic_phone }}</p>
+        }
+      </div>
+      <div class="rx-doc-info">
+        <h2 class="rx-doc-name">{{ data()!.doctor_name || 'Doctor' }}</h2>
+        @if (data()!.doctor_designation) {
+          <p class="rx-doc-sub">{{ data()!.doctor_designation }}</p>
+        }
+        @if (data()!.doctor_license_number) {
+          <p class="rx-doc-sub">Reg. No: {{ data()!.doctor_license_number }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="rx-gold-bar"></div>
+
+    <!-- ═══ PATIENT ROW ═══ -->
+    <div class="rx-patient-band">
+      <div class="rx-patient-fields">
+        <div class="rx-field">
+          <span class="rx-field-label">Patient</span>
+          <span class="rx-field-value">{{ data()!.patient_name || '—' }}</span>
+        </div>
+        @if (data()!.patient_code) {
+          <div class="rx-field">
+            <span class="rx-field-label">Patient ID</span>
+            <span class="rx-field-value">{{ data()!.patient_code }}</span>
+          </div>
+        }
+        @if (data()!.patient_gender) {
+          <div class="rx-field">
+            <span class="rx-field-label">Gender</span>
+            <span class="rx-field-value">{{ data()!.patient_gender }}</span>
+          </div>
+        }
+        @if (data()!.patient_date_of_birth) {
+          <div class="rx-field">
+            <span class="rx-field-label">Age</span>
+            <span class="rx-field-value">{{ calculateAge(data()!.patient_date_of_birth) }}</span>
+          </div>
+        }
+        @if (data()!.patient_phone) {
+          <div class="rx-field">
+            <span class="rx-field-label">Phone</span>
+            <span class="rx-field-value">{{ data()!.patient_phone }}</span>
+          </div>
+        }
+      </div>
+      <div class="rx-consult-fields">
+        <div class="rx-field">
+          <span class="rx-field-label">Date</span>
+          <span class="rx-field-value">{{ data()!.consultation_date || today() }}</span>
+        </div>
+        @if (data()!.consultation_number) {
+          <div class="rx-field">
+            <span class="rx-field-label">Consultation</span>
+            <span class="rx-field-value">{{ data()!.consultation_number }}</span>
+          </div>
+        }
+        @if (data()!.department_display) {
+          <div class="rx-field">
+            <span class="rx-field-label">Department</span>
+            <span class="rx-field-value">{{ data()!.department_display }}</span>
+          </div>
+        }
+        @if (data()!.risk_score) {
+          <div class="rx-field">
+            <span class="rx-field-label">Risk Score</span>
+            <span class="rx-field-value">{{ data()!.risk_score }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="rx-divider"></div>
+
+    <!-- ═══ DIAGNOSIS ═══ -->
+    @if (data()!.chief_complaint || data()!.provisional_diagnosis || data()!.diagnosis_assistance) {
+      <div class="rx-diagnosis-band">
+        @if (data()!.chief_complaint) {
+          <div class="rx-diag-row">
+            <span class="rx-diag-lbl">Chief Complaint:</span>
+            <span class="rx-diag-val">{{ data()!.chief_complaint }}</span>
+          </div>
+        }
+        @if (data()!.provisional_diagnosis) {
+          <div class="rx-diag-row">
+            <span class="rx-diag-lbl">Provisional Diagnosis:</span>
+            <span class="rx-diag-val">{{ data()!.provisional_diagnosis }}</span>
+          </div>
+        }
+        @if (data()!.final_diagnosis) {
+          <div class="rx-diag-row">
+            <span class="rx-diag-lbl">Final Diagnosis:</span>
+            <span class="rx-diag-val">{{ data()!.final_diagnosis }}</span>
+          </div>
+        }
+        @if (data()!.diagnosis_assistance) {
+          <div class="rx-diag-row">
+            <span class="rx-diag-lbl">Clinical Summary:</span>
+            <span class="rx-diag-val">{{ data()!.diagnosis_assistance }}</span>
+          </div>
+        }
+      </div>
+      <div class="rx-divider"></div>
+    }
+
+    <!-- ═══ ALERTS ═══ -->
+    @if (data()!.alerts?.length) {
+      <div class="rx-alerts-band">
+        <div class="rx-section-title">⚠ Clinical Alerts</div>
+        @for (alert of data()!.alerts!; track alert) {
+          <p class="rx-alert-item">{{ alert }}</p>
+        }
+      </div>
+      <div class="rx-divider"></div>
+    }
+
+    <!-- ═══ PER-TOOTH DIAGNOSES (if present) ═══ -->
+    @if (toothResults().length > 0) {
+      <div class="rx-tooth-section">
+        <div class="rx-section-title">Dental Findings</div>
+        <table class="rx-findings-table">
+          <thead>
+            <tr>
+              <th>Tooth</th>
+              <th>Diagnosis</th>
+              <th>ICD</th>
+              <th>Confidence</th>
+              <th>Red Flags</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of toothResults(); track entry.tooth) {
+              <tr>
+                <td class="tooth-cell">{{ entry.tooth }}</td>
+                <td>{{ entry.result.diagnosis }}</td>
+                <td class="icd-cell">{{ entry.result.icd }}</td>
+                <td>
+                  <p-tag
+                    [value]="entry.result.confidence"
+                    [severity]="confidenceSeverity(entry.result.confidence)"
+                  ></p-tag>
+                </td>
+                <td class="flags-cell">
+                  @for (flag of entry.result.redFlags || []; track flag) {
+                    <span class="flag-item">⚠ {{ flag }}</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="rx-divider"></div>
+    }
+
+    <!-- ═══ Rx MEDICATIONS ═══ -->
+    <div class="rx-body">
+      <div class="rx-symbol-col">
+        <span class="rx-symbol">℞</span>
+      </div>
+      <div class="rx-med-col">
+        @if (allMedications().length > 0) {
+          <table class="rx-med-table">
+            <thead>
+              <tr>
+                <th>Tooth</th>
+                <th>Medication</th>
+                <th>Dose</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of allMedications(); track item.med.name + item.tooth) {
+                <tr>
+                  <td class="tooth-cell">{{ item.tooth }}</td>
+                  <td class="med-name">{{ item.med.name }}</td>
+                  <td>{{ item.med.dosage }}</td>
+                  <td>{{ item.med.frequency }}</td>
+                  <td>{{ item.med.duration }}</td>
+                  <td class="note-cell">{{ item.med.note || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <!-- Fallback: show recommendations as prescription lines -->
+          @if (data()!.recommendations?.length) {
+            <div class="rx-recommendations">
+              @for (rec of data()!.recommendations!; track rec) {
+                <p class="rx-rec-item">• {{ rec }}</p>
+              }
+            </div>
+          } @else {
+            <p class="rx-empty">No medications prescribed.</p>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- ═══ TREATMENT PLAN (per-tooth) ═══ -->
+    @if (toothResults().length > 0) {
+      <div class="rx-divider"></div>
+      <div class="rx-treatment-section">
+        <div class="rx-section-title">Treatment Plan</div>
+        @for (entry of toothResults(); track entry.tooth) {
+          @if (entry.result.treatment.length > 0) {
+            <div class="rx-treatment-row">
+              <span class="treatment-tooth">Tooth {{ entry.tooth }}</span>
+              <span class="treatment-sep">→</span>
+              <span class="treatment-steps">{{ entry.result.treatment.join(' → ') }}</span>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <div class="rx-divider"></div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="rx-footer">
+      <div class="rx-footer-note">
+        <p><strong>⚠ Important:</strong> Take medications as prescribed. Do not self-medicate.</p>
+        <p>Follow up as advised. Contact the clinic if symptoms worsen.</p>
+        <p class="rx-generated">Generated by Dental CDSS · {{ today() }}</p>
+      </div>
+      <div class="rx-signature-block">
+        <div class="rx-sig-line"></div>
+        <p class="rx-sig-name">{{ data()!.doctor_name || 'Doctor' }}</p>
+        @if (data()!.doctor_designation) {
+          <p class="rx-sig-sub">{{ data()!.doctor_designation }}</p>
+        }
+        <p class="rx-sig-sub">Date: {{ data()!.consultation_date || today() }}</p>
+      </div>
+    </div>
+
+  </div>
+}
+
+<p-toast></p-toast>
