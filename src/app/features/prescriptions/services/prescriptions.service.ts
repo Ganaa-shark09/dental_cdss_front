@@ -1,11 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
-import { Prescription, PrescriptionListResponse } from '../models/prescription.model';
+import {
+  Prescription,
+  PrescriptionListResponse,
+  PrescriptionPrintData,
+} from '../models/prescription.model';
 
 export interface PrescriptionPayload {
   patient_id: string;
-  staff_id: string;
+  staff_id?: string;
   consultation_id?: string;
 
   date_issued: string;
@@ -17,7 +21,7 @@ export interface PrescriptionPayload {
   treatment_instructions: string;
   notes?: string;
 
-  status: string;
+  status?: string;
   is_active?: boolean;
 }
 
@@ -34,6 +38,10 @@ export class PrescriptionsService {
 
   getPrescription(uuid: string): Observable<Prescription> {
     return this.api.get<Prescription>(`${this.endpoint}${uuid}/`);
+  }
+
+  getPrescriptionPrint(uuid: string): Observable<PrescriptionPrintData> {
+    return this.api.get<PrescriptionPrintData>(`${this.endpoint}${uuid}/print/`);
   }
 
   createPrescription(payload: PrescriptionPayload): Observable<Prescription> {

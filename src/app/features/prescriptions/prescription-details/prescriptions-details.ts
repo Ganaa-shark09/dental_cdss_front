@@ -79,4 +79,9 @@ export class PrescriptionsDetails {
     const id = this.route.snapshot.paramMap.get('uuid')!;
     this.router.navigate(['/prescriptions', id, 'edit']);
   }
+
+  onPrint(): void {
+    const id = this.route.snapshot.paramMap.get('uuid')!;
+    this.router.navigate(['/prescriptions', id, 'print']);
+  }
 }

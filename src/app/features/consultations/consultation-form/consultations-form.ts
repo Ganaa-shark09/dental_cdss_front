@@ -354,7 +354,7 @@ export class ConsultationsForm {
 
     const consultationPayload: ConsultationPayload = {
       ...formValue,
-      consultation_time: this.normalizeTime(formValue.consultation_time),
+      consultation_time: this.normalizeTime(formValue.consultation_time ?? ''),
     };
 
     this.saving.set(true);

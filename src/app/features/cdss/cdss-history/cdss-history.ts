@@ -76,7 +76,7 @@ export class CdssHistory {
   }
 
   onAnalyze(): void {
-    this.router.navigate(['/cdss/new']);
+    this.router.navigate(['/cdss/wizard']);
   }
 
   onView(item: CdssEngine): void {

@@ -1,0 +1,452 @@
+:host {
+  display: block;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* ── Screen controls ── */
+.print-controls {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.controls-inner {
+  display: flex;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.print-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 5rem;
+  color: #888;
+}
+
+/* ── Prescription Document ── */
+.prescription-doc {
+  max-width: 960px;
+  margin: 1.5rem auto 3rem;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  font-family: 'Georgia', serif;
+}
+
+/* ── Clinic Header ── */
+.rx-clinic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 2rem;
+  background: #1a3a6c;
+  color: #fff;
+  gap: 2rem;
+}
+
+.rx-clinic-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  font-family: sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.rx-clinic-sub {
+  font-size: 0.82rem;
+  opacity: 0.82;
+  margin: 0.2rem 0;
+  font-family: sans-serif;
+}
+
+.rx-doc-info {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.rx-doc-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  font-family: sans-serif;
+}
+
+.rx-doc-sub {
+  font-size: 0.8rem;
+  opacity: 0.82;
+  margin: 0.15rem 0;
+  font-family: sans-serif;
+}
+
+.rx-gold-bar {
+  height: 4px;
+  background: linear-gradient(to right, #c8a84b, #e8c96b, #c8a84b);
+}
+
+/* ── Patient Band ── */
+.rx-patient-band {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1rem 2rem;
+  background: #fafafa;
+}
+
+.rx-patient-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.rx-consult-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.rx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.rx-field-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+  font-family: sans-serif;
+}
+
+.rx-field-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-family: sans-serif;
+}
+
+/* ── Divider ── */
+.rx-divider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 0 2rem;
+}
+
+/* ── Diagnosis Band ── */
+.rx-diagnosis-band {
+  padding: 0.75rem 2rem;
+  background: #f8f6ee;
+}
+
+.rx-diag-row {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  margin-bottom: 0.3rem;
+}
+
+.rx-diag-lbl {
+  font-weight: 700;
+  min-width: 160px;
+  color: #555;
+  font-family: sans-serif;
+}
+
+.rx-diag-val {
+  color: #1a1a1a;
+}
+
+/* ── Alerts Band ── */
+.rx-alerts-band {
+  padding: 0.75rem 2rem;
+  background: #fff8f0;
+}
+
+.rx-alert-item {
+  font-size: 0.85rem;
+  color: #7b3a00;
+  margin: 0.2rem 0;
+  font-family: sans-serif;
+}
+
+/* ── Recommendations (fallback for no per-tooth meds) ── */
+.rx-recommendations {
+  padding: 0.25rem 0;
+}
+
+.rx-rec-item {
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+  color: #222;
+  line-height: 1.6;
+}
+
+/* ── Section title ── */
+.rx-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #1a3a6c;
+  font-family: sans-serif;
+  margin-bottom: 0.6rem;
+}
+
+/* ── Dental Findings Table ── */
+.rx-tooth-section {
+  padding: 1rem 2rem;
+}
+
+.rx-findings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  font-family: sans-serif;
+
+  th {
+    text-align: left;
+    padding: 0.4rem 0.6rem;
+    background: #f0f4fb;
+    color: #1a3a6c;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #d0d8e8;
+  }
+
+  td {
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    color: #333;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.tooth-cell {
+  font-weight: 700;
+  color: #1a3a6c;
+  width: 50px;
+}
+
+.icd-cell {
+  color: #888;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.flags-cell {
+  font-size: 0.78rem;
+  color: #c53030;
+}
+
+.flag-item {
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.rx-confidence-tag {
+  font-size: 0.7rem !important;
+}
+
+/* ── Rx Medications ── */
+.rx-body {
+  display: flex;
+  padding: 1.25rem 2rem;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.rx-symbol-col {
+  width: 50px;
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+
+.rx-symbol {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #1a3a6c;
+  line-height: 1;
+}
+
+.rx-med-col {
+  flex: 1;
+}
+
+.rx-med-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  font-family: sans-serif;
+
+  th {
+    text-align: left;
+    padding: 0.35rem 0.5rem;
+    background: #f5f5f5;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #222;
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.med-name {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.note-cell {
+  color: #888;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.rx-empty {
+  color: #bbb;
+  font-style: italic;
+  font-size: 0.88rem;
+}
+
+/* ── Treatment Plan ── */
+.rx-treatment-section {
+  padding: 1rem 2rem;
+}
+
+.rx-treatment-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  font-family: sans-serif;
+}
+
+.treatment-tooth {
+  font-weight: 700;
+  color: #1a3a6c;
+  min-width: 60px;
+}
+
+.treatment-sep {
+  color: #aaa;
+}
+
+.treatment-steps {
+  color: #333;
+}
+
+/* ── Footer ── */
+.rx-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1rem 2rem 1.75rem;
+  gap: 2rem;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.rx-footer-note {
+  font-size: 0.78rem;
+  color: #999;
+  font-family: sans-serif;
+
+  p {
+    margin: 0.2rem 0;
+  }
+}
+
+.rx-generated {
+  margin-top: 0.4rem !important;
+  font-style: italic;
+  color: #bbb;
+}
+
+.rx-signature-block {
+  text-align: center;
+  min-width: 200px;
+}
+
+.rx-sig-line {
+  border-top: 1.5px solid #333;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.rx-sig-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a3a6c;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.rx-sig-sub {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0.12rem 0;
+  font-family: sans-serif;
+}
+
+/* ── Print styles ── */
+@media print {
+  :host {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .prescription-doc {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    page-break-inside: avoid;
+  }
+
+  .rx-clinic-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .rx-diagnosis-band {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .rx-findings-table th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

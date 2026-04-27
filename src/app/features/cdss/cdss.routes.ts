@@ -6,8 +6,16 @@ export const cdssRoutes: Routes = [
     loadComponent: () => import('./cdss-history/cdss-history').then((m) => m.CdssHistory),
   },
   {
+    path: 'wizard',
+    loadComponent: () => import('./cdss-wizard/cdss-wizard').then((m) => m.CdssWizard),
+  },
+  {
     path: 'new',
     loadComponent: () => import('./cdss-analyze/cdss-analyze').then((m) => m.CdssAnalyze),
+  },
+  {
+    path: ':uuid/print',
+    loadComponent: () => import('./cdss-print/cdss-print').then((m) => m.CdssPrint),
   },
   {
     path: ':uuid',

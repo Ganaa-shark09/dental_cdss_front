@@ -28,6 +28,42 @@ export interface Prescription {
   updated_at?: string;
 }
 
+export interface PrescriptionPrintData {
+  uuid: string;
+  consultation_number?: string;
+  consultation_date?: string;
+  date_issued?: string;
+  patient: {
+    uuid: string;
+    full_name: string;
+    code?: string;
+    gender?: string;
+    date_of_birth?: string;
+    phone?: string;
+  };
+  clinic: {
+    uuid: string;
+    name: string;
+    address?: string;
+    phone?: string;
+  };
+  doctor: {
+    uuid: string;
+    name: string;
+    designation?: string;
+    license_number?: string;
+  };
+  chief_complaint?: string;
+  provisional_diagnosis?: string;
+  final_diagnosis?: string;
+  medication?: string;
+  dosage?: string;
+  frequency?: string;
+  duration?: string;
+  treatment_instructions?: string;
+  notes?: string;
+}
+
 export interface PrescriptionListResponse {
   count?: number;
   results?: Prescription[];

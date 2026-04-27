@@ -12,6 +12,11 @@ export const prescriptionsRoutes: Routes = [
       import('./prescription-form/prescriptions-form').then((m) => m.PrescriptionsForm),
   },
   {
+    path: ':uuid/print',
+    loadComponent: () =>
+      import('./prescription-print/prescriptions-print').then((m) => m.PrescriptionsPrint),
+  },
+  {
     path: ':uuid',
     loadComponent: () =>
       import('./prescription-details/prescriptions-details').then((m) => m.PrescriptionsDetails),

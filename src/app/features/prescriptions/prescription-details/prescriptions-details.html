@@ -8,6 +8,11 @@
       <div class="cdss-section-card-buttons">
         <app-cdss-back-button (click)="onBack()"></app-cdss-back-button>
         <app-cdss-save-button
+          label="Print"
+          severity="info"
+          (click)="onPrint()"
+        ></app-cdss-save-button>
+        <app-cdss-save-button
           label="Edit"
           severity="secondary"
           (click)="onEdit()"

@@ -9,6 +9,7 @@ export interface ToothRecord {
   palpation_tenderness: boolean;
   probing_depth_summary?: string | null;
   notes?: string | null;
+  exam_data?: Record<string, string | boolean | number>;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
@@ -40,5 +41,6 @@ export interface ToothRecordPayload {
   palpation_tenderness?: boolean;
   probing_depth_summary?: string;
   notes?: string;
+  exam_data?: Record<string, string | boolean | number>;
   is_active?: boolean;
 }
