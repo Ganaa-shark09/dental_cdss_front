@@ -30,7 +30,7 @@ export class ClinicsForm {
   form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     code: new FormControl('', { nonNullable: true }),
-    email: new FormControl('', { nonNullable: true }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
     phone_number: new FormControl('', { nonNullable: true }),
     address: new FormControl('', { nonNullable: true }),
     city: new FormControl('', { nonNullable: true }),

@@ -1,28 +1,28 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 
-export interface UserOptionItem {
-  uuid: string;
-  username?: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-}
-
-export interface UserListResponse {
-  count?: number;
-  results?: UserOptionItem[];
-}
-
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class UsersService {
   private readonly api = inject(ApiService);
-  private readonly endpoint = 'users/';
 
-  getUsers(): Observable<UserOptionItem[] | UserListResponse> {
-    return this.api.get<UserOptionItem[] | UserListResponse>(this.endpoint);
+  list() {
+    return this.api.get<any[]>('users/');
+  }
+
+  getUsers() {
+    // For backward compatibility with staff-form and other usages
+    return this.list();
+  }
+
+  get(uuid: string) {
+    return this.api.get<any>(`users/${uuid}/`);
+  }
+
+  create(data: any) {
+    return this.api.post<any>('users/', data);
+  }
+
+  me() {
+    return this.api.get<any>('users/users/me/');
   }
 }

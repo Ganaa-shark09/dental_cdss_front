@@ -50,7 +50,7 @@ export class StaffForm {
     }),
     first_name: new FormControl('', { nonNullable: true }),
     last_name: new FormControl('', { nonNullable: true }),
-    email: new FormControl('', { nonNullable: true }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
     phone_number: new FormControl('', { nonNullable: true }),
     role: new FormControl('', { nonNullable: true }),
     specialization: new FormControl('', { nonNullable: true }),
@@ -158,11 +158,13 @@ export class StaffForm {
     this.usersLoading.set(true);
 
     this.usersService.getUsers().subscribe({
-      next: (response) => {
-        const users = Array.isArray(response) ? response : (response.results ?? []);
+      next: (response: any) => {
+        const users = Array.isArray(response)
+          ? response
+          : (response && Array.isArray(response.results) ? response.results : []);
 
         this.userOptions.set(
-          users.map((user) => ({
+          users.map((user: any) => ({
             label:
               [user.first_name, user.last_name].filter(Boolean).join(' ').trim() ||
               user.username ||

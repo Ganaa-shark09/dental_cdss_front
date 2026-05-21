@@ -180,6 +180,18 @@ export class CdssForm {
       errors.push(`Value must be at most ${control.errors['max'].max}.`);
     }
 
+    if (control.errors?.['notInPast']) {
+      errors.push(`${field.label} cannot be in the past.`);
+    }
+
+    if (control.errors?.['notInFuture']) {
+      errors.push(`${field.label} cannot be in the future.`);
+    }
+
+    if (control.errors?.['appointmentLinked']) {
+      errors.push('This appointment is already linked to a consultation.');
+    }
+
     return errors;
   }
 

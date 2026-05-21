@@ -75,7 +75,7 @@ export class TreatmentPlansForm {
     summary: new FormControl('', { nonNullable: true }),
     procedures: new FormControl('', { nonNullable: true }),
     estimated_duration: new FormControl('', { nonNullable: true }),
-    cost_estimate: new FormControl<number | null>(null),
+    cost_estimate: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
     instructions: new FormControl('', { nonNullable: true }),
     notes: new FormControl('', { nonNullable: true }),
 

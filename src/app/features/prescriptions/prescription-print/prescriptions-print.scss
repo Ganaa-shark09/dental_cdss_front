@@ -1,3 +1,78 @@
+/* CDSS Section Styling */
+.cdss-section {
+  background: var(--cdss-bg, #f8fafc);
+  border: 1px solid var(--cdss-border, #e0e0e0);
+  border-radius: 8px;
+  margin: 2rem 0 1.5rem 0;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  font-family: 'Georgia', serif;
+}
+
+.cdss-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--cdss-title, #1a3a6c);
+  font-family: 'Georgia', serif;
+}
+
+.cdss-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.5rem 0;
+  color: var(--cdss-subtitle, #444);
+  font-family: sans-serif;
+}
+
+.cdss-list {
+  margin: 0 0 0.5rem 1.2rem;
+  padding: 0;
+  list-style: disc inside;
+}
+
+.cdss-rec-item {
+  font-size: 1rem;
+  color: var(--cdss-rec, #222);
+  margin-bottom: 0.3rem;
+}
+
+.cdss-alert-list {
+  list-style: none;
+  padding-left: 0;
+}
+.cdss-alert-item {
+  color: #b71c1c;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.cdss-summary {
+  font-size: 0.98rem;
+  color: var(--cdss-summary, #333);
+  margin-bottom: 0.5rem;
+  font-family: 'Georgia', serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cdss-section {
+    --cdss-bg: #181f2a;
+    --cdss-border: #2a3550;
+    --cdss-title: #e0e6f6;
+    --cdss-subtitle: #bfc8e6;
+    --cdss-rec: #e0e6f6;
+    --cdss-summary: #bfc8e6;
+    background: var(--cdss-bg);
+    border-color: var(--cdss-border);
+    color: #e0e6f6;
+  }
+  .cdss-title, .cdss-subtitle, .cdss-rec-item, .cdss-summary {
+    color: inherit;
+  }
+  .cdss-alert-item {
+    color: #ffb4b4;
+  }
+}
 :host {
   display: block;
   background: #f5f5f5;
