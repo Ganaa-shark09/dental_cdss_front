@@ -7,7 +7,7 @@
 
   <app-cdss-form
     [config]="formConfig()"
-    [loading]="loading() || saving() || clinicsLoading() || usersLoading()"
+    [loading]="loading() || saving() || clinicsLoading()"
     [disableOnInvalid]="true"
     (submit)="onSave($event.rawValue)"
     (back)="onBack()"

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 
+import { notInFutureValidator } from '../../../shared/utils/date.validators';
 import { PatientsService, PatientPayload } from '../services/patients.service';
 import { CdssForm } from '../../../shared/components/form/cdss-form/cdss-form';
 import { CdssFormConfig } from '../../../shared/components/form/cdss-form/cdss-form.types';
@@ -36,10 +37,10 @@ export class PatientsForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    email: new FormControl('', { nonNullable: true }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
     phone_number: new FormControl('', { nonNullable: true }),
     gender: new FormControl('', { nonNullable: true }),
-    date_of_birth: new FormControl('', { nonNullable: true }),
+    date_of_birth: new FormControl('', { nonNullable: true, validators: [notInFutureValidator()] }),
     address: new FormControl('', { nonNullable: true }),
     city: new FormControl('', { nonNullable: true }),
     state: new FormControl('', { nonNullable: true }),

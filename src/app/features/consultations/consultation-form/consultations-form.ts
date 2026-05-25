@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 
+import { notInFutureValidator } from '../../../shared/utils/date.validators';
+import { AppointmentLinkedValidator } from './appointment-linked.validator';
 import { ConsultationsService, ConsultationPayload } from '../services/consultations.service';
 import { PatientsService } from '../../patients/services/patients.service';
 import { StaffService } from '../../staff/services/staff.service';
@@ -32,6 +34,7 @@ export class ConsultationsForm {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly messageService = inject(MessageService);
+  private readonly appointmentLinkedValidator = inject(AppointmentLinkedValidator);
 
   readonly uuid = this.route.snapshot.paramMap.get('uuid');
   readonly isEditMode = !!this.uuid;
@@ -61,11 +64,14 @@ export class ConsultationsForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    appointment_id: new FormControl('', { nonNullable: true }),
+    appointment_id: new FormControl('', {
+      nonNullable: true,
+      asyncValidators: [this.appointmentLinkedValidator.validate()],
+    }),
 
     consultation_date: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, notInFutureValidator()],
     }),
     consultation_time: new FormControl('', {
       nonNullable: true,

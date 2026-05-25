@@ -39,11 +39,15 @@
         }
       </div>
       <div class="rx-doc-info">
-        <h2 class="rx-doc-name">{{ data()!.doctor.name }}</h2>
-        @if (data()!.doctor.designation) {
+        @if (data()!.doctor && data()!.doctor.name) {
+          <h2 class="rx-doc-name">{{ data()!.doctor.name }}</h2>
+        } @else {
+          <h2 class="rx-doc-name">—</h2>
+        }
+        @if (data()!.doctor && data()!.doctor.designation) {
           <p class="rx-doc-designation">{{ data()!.doctor.designation }}</p>
         }
-        @if (data()!.doctor.license_number) {
+        @if (data()!.doctor && data()!.doctor.license_number) {
           <p class="rx-doc-license">Reg. No: {{ data()!.doctor.license_number }}</p>
         }
       </div>
@@ -98,8 +102,6 @@
     </div>
 
     <div class="rx-divider"></div>
-
-    <!-- Diagnosis Section -->
     @if (data()!.chief_complaint || data()!.provisional_diagnosis || data()!.final_diagnosis) {
       <div class="rx-diagnosis-section">
         @if (data()!.chief_complaint) {
@@ -179,6 +181,56 @@
       </div>
     }
 
+
+    <!-- CDSS Prescription Section -->
+    @if (cdssData() || (cdssRecommendations() && cdssRecommendations()!.length)) {
+      <!-- <div class="rx-divider"></div> -->
+      <section class="cdss-section">
+        <h3 class="cdss-title">Clinical Decision Support (CDSS) Recommendations</h3>
+        @if (cdssRecommendations() && cdssRecommendations()!.length) {
+          <div class="cdss-recommendations">
+            <div class="cdss-subtitle">Recommendations:</div>
+            <ul class="cdss-list">
+              @for (rec of cdssRecommendations(); track rec.uuid) {
+                <li class="cdss-rec-item">{{ rec.recommendation }}</li>
+              }
+            </ul>
+          </div>
+        } @else if (cdssData() && cdssData()!.recommendations?.length) {
+          <div class="cdss-recommendations">
+            <div class="cdss-subtitle">Recommendations:</div>
+            <ul class="cdss-list">
+              @for (rec of cdssData()!.recommendations!; track rec) {
+                <li class="cdss-rec-item">{{ rec }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (cdssData() && cdssData()!.alerts?.length) {
+          <div class="cdss-alerts">
+            <div class="cdss-subtitle">Alerts:</div>
+            <ul class="cdss-list cdss-alert-list">
+              @for (alert of cdssData()!.alerts!; track alert) {
+                <li class="cdss-alert-item">⚠ {{ alert }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (cdssData() && cdssData()!.diagnosis_assistance) {
+          <div class="cdss-diagnosis-assistance">
+            <div class="cdss-subtitle">Clinical Summary:</div>
+            <div class="cdss-summary">{{ cdssData()!.diagnosis_assistance }}</div>
+          </div>
+        }
+        @if (cdssData() && cdssData()!.examination_summary) {
+          <div class="cdss-exam-summary">
+            <div class="cdss-subtitle">Examination Summary:</div>
+            <div class="cdss-summary">{{ cdssData()!.examination_summary }}</div>
+          </div>
+        }
+      </section>
+    }
+
     <div class="rx-divider"></div>
 
     <!-- Footer / Signature -->
@@ -189,8 +241,8 @@
       </div>
       <div class="rx-signature-block">
         <div class="rx-sig-line"></div>
-        <p class="rx-sig-name">{{ data()!.doctor.name }}</p>
-        @if (data()!.doctor.designation) {
+        <p class="rx-sig-name">{{ data()!.doctor && data()!.doctor.name ? data()!.doctor.name : '—' }}</p>
+        @if (data()!.doctor && data()!.doctor.designation) {
           <p class="rx-sig-designation">{{ data()!.doctor.designation }}</p>
         }
         <p class="rx-sig-date">Date: {{ data()!.date_issued || today() }}</p>
@@ -198,5 +250,4 @@
     </div>
   </div>
 }
-
 <p-toast></p-toast>

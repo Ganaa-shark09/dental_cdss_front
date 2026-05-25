@@ -1,17 +1,42 @@
-<aside class="sidebar">
-  <div class="sidebar-brand">
+<aside class="sidebar" [class.sidebar--collapsed]="sidebarState.collapsed()">
+  <button
+    type="button"
+    class="sidebar-brand"
+    (click)="sidebarState.toggle()"
+    [attr.aria-label]="sidebarState.collapsed() ? 'Open sidebar' : 'Close sidebar'"
+    [attr.aria-expanded]="!sidebarState.collapsed()"
+  >
     <div class="brand-mark">DC</div>
-    <div>
-      <h2>Dental CDSS</h2>
-      <p>Clinical Workspace</p>
-    </div>
-  </div>
+
+    @if (!sidebarState.collapsed()) {
+      <div class="brand-text">
+        <h2>Dental CDSS</h2>
+        <p>Clinical Workspace</p>
+      </div>
+    }
+
+    <!-- <span class="sidebar-toggle-icon">
+    </span> -->
+      <i
+        class="pi"
+        [class.pi-angle-left]="!sidebarState.collapsed()"
+        [class.pi-angle-right]="sidebarState.collapsed()"
+      ></i>
+  </button>
 
   <nav class="sidebar-nav">
     @for (item of menuItems; track item.route) {
-      <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="nav-item"
+        [title]="sidebarState.collapsed() ? item.label : null"
+      >
         <i [class]="item.icon"></i>
-        <span>{{ item.label }}</span>
+
+        @if (!sidebarState.collapsed()) {
+          <span>{{ item.label }}</span>
+        }
       </a>
     }
   </nav>

@@ -1,17 +1,266 @@
-<div class="dashboard-grid">
-  <p-card header="Patients">
-    <p>Patient management module will appear here.</p>
-  </p-card>
+<div class="dashboard-shell">
+  <ng-container *ngIf="!loading(); else loadingTpl">
+    <ng-container *ngIf="summary() as dashboard; else emptyDashboardTpl">
+      <!-- Header -->
+      <section class="dashboard-header">
+        <div class="header-left">
+          <p class="header-kicker">Clinical workspace</p>
 
-  <p-card header="Appointments">
-    <p>Appointment scheduling module will appear here.</p>
-  </p-card>
+          <h1>Dashboard</h1>
 
-  <p-card header="Consultations">
-    <p>Clinical consultation workflows will appear here.</p>
-  </p-card>
+          <p class="header-subtitle">
+            Monitor patients, appointments, consultations, users, and recent clinical activity from
+            one clean workspace.
+          </p>
+        </div>
 
-  <p-card header="CDSS">
-    <p>Decision support insights and recommendations will appear here.</p>
-  </p-card>
+        <div class="header-right">
+          <div class="meta-card">
+            <span>Today</span>
+            <strong>{{ today | date: 'dd MMM yyyy' }}</strong>
+          </div>
+
+          <div class="meta-card">
+            <span>Total Records</span>
+            <strong>{{ dashboard.clinical_snapshot.total_records }}</strong>
+          </div>
+
+          <div class="meta-card">
+            <span>Last Updated</span>
+            <strong>{{ dashboard.clinical_snapshot.last_updated | date: 'shortTime' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error -->
+      <div class="error-banner" *ngIf="error()">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>{{ error() }}</span>
+      </div>
+
+      <!-- Dynamic Stats -->
+      <section class="stats-grid">
+        <article
+          class="stat-card"
+          *ngFor="let metric of dashboard.metrics; trackBy: trackByDashboardItem"
+        >
+          <div class="stat-icon">
+            <i [class]="metric.icon"></i>
+          </div>
+
+          <div class="stat-content">
+            <span>{{ metric.label }}</span>
+            <strong>{{ metric.value }}</strong>
+            <small>{{ metric.caption }}</small>
+          </div>
+        </article>
+      </section>
+
+      <!-- Main Grid -->
+      <section class="main-grid">
+        <!-- Weekly Appointments Chart -->
+        <article class="panel panel-large">
+          <div class="panel-header">
+            <div>
+              <h2>Appointments Overview</h2>
+              <p>Real weekly appointment count</p>
+            </div>
+
+            <span class="panel-badge">This Week</span>
+          </div>
+
+          <div
+            class="chart-card"
+            *ngIf="dashboard.appointments_this_week.length > 0; else noChartDataTpl"
+          >
+            <div class="chart-grid-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="chart-bars">
+              <div
+                class="bar-item"
+                *ngFor="let item of dashboard.appointments_this_week; trackBy: trackByWeeklyDate"
+              >
+                <div
+                  class="bar"
+                  [style.height]="getBarHeight(item.count)"
+                  [title]="item.count + ' appointments on ' + item.day"
+                ></div>
+
+                <label>{{ item.day }}</label>
+                <small>{{ item.count }}</small>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noChartDataTpl>
+            <div class="empty-state chart-empty">
+              <div class="empty-icon">
+                <i class="pi pi-chart-bar"></i>
+              </div>
+              <h3>No appointment data</h3>
+              <p>Weekly appointment data will appear here once records are available.</p>
+            </div>
+          </ng-template>
+        </article>
+
+        <!-- Dynamic Clinical Snapshot -->
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Clinical Snapshot</h2>
+              <p>Live operational summary</p>
+            </div>
+          </div>
+
+          <div class="ring-wrap">
+            <div class="ring-chart" [style.--ring-percent]="completionRate() + '%'">
+              <div class="ring-inner">
+                <strong>{{ completionRate() }}%</strong>
+                <span>Completion</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-list">
+            <div class="summary-row">
+              <span>Patients</span>
+              <strong>{{ dashboard.totals.patients }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Appointments</span>
+              <strong>{{ dashboard.totals.appointments }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Consultations</span>
+              <strong>{{ dashboard.totals.consultations }}</strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Users</span>
+              <strong>{{ dashboard.totals.users }}</strong>
+            </div>
+          </div>
+        </article>
+
+        <!-- Recent Activity -->
+        <article class="panel panel-large">
+          <div class="panel-header">
+            <div>
+              <h2>Recent Activity</h2>
+              <p>Latest system and clinical updates</p>
+            </div>
+
+            <span class="panel-badge"> {{ dashboard.recent_activities.length }} Items </span>
+          </div>
+
+          <div
+            class="activity-list"
+            *ngIf="dashboard.recent_activities.length > 0; else noActivityTpl"
+          >
+            <div
+              class="activity-item"
+              *ngFor="let activity of dashboard.recent_activities; trackBy: trackByActivity"
+            >
+              <div class="activity-icon">
+                <i [class]="getActivityIcon(activity.model)"></i>
+              </div>
+
+              <div class="activity-content">
+                <div class="activity-top">
+                  <strong>{{ activity.model }}</strong>
+                  <span>{{ activity.timestamp | date: 'short' }}</span>
+                </div>
+
+                <p>
+                  <span class="activity-field">{{ activity.field }}</span>
+                  changed by
+                  <span class="activity-user">{{ activity.user }}</span>
+                </p>
+
+                <div class="activity-change" *ngIf="activity.old !== null || activity.new !== null">
+                  <span>Old: {{ activity.old || '-' }}</span>
+                  <span>New: {{ activity.new || '-' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noActivityTpl>
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="pi pi-inbox"></i>
+              </div>
+              <h3>No recent activity</h3>
+              <p>Activity will appear here once users start interacting with the system.</p>
+            </div>
+          </ng-template>
+        </article>
+
+        <!-- Dynamic Quick Links -->
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Quick Access</h2>
+              <p>Navigate to core modules</p>
+            </div>
+          </div>
+
+          <div class="quick-links" *ngIf="dashboard.quick_links.length > 0; else noLinksTpl">
+            <a
+              class="quick-link"
+              *ngFor="let link of dashboard.quick_links; trackBy: trackByDashboardItem"
+              [routerLink]="link.route"
+            >
+              <div class="quick-link-icon">
+                <i [class]="link.icon"></i>
+              </div>
+
+              <div class="quick-link-text">
+                <strong>{{ link.label }}</strong>
+                <small>{{ link.caption }}</small>
+              </div>
+
+              <i class="pi pi-arrow-right"></i>
+            </a>
+          </div>
+
+          <ng-template #noLinksTpl>
+            <div class="empty-state small-empty">
+              <div class="empty-icon">
+                <i class="pi pi-link"></i>
+              </div>
+              <h3>No links available</h3>
+              <p>Quick links will appear here once configured from backend.</p>
+            </div>
+          </ng-template>
+        </article>
+      </section>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #loadingTpl>
+    <div class="loading-state">
+      <div class="loader"></div>
+      <h3>Loading dashboard</h3>
+      <p>Please wait while the latest dashboard data is being prepared.</p>
+    </div>
+  </ng-template>
+
+  <ng-template #emptyDashboardTpl>
+    <div class="empty-dashboard">
+      <div class="empty-icon">
+        <i class="pi pi-database"></i>
+      </div>
+      <h3>No dashboard data available</h3>
+      <p>Please refresh or check the dashboard summary API.</p>
+    </div>
+  </ng-template>
 </div>

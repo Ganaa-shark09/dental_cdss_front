@@ -1,3 +1,4 @@
+// (Removed all misplaced top-level methods)
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
@@ -15,6 +16,7 @@ import { CdssSchema } from '../models/cdss-schema.model';
 export class CdssService {
   private readonly api = inject(ApiService);
   private readonly endpoint = 'cdss/';
+
 
   getSchema(): Observable<CdssSchema> {
     return this.api.get<CdssSchema>(`${this.endpoint}schema/`);

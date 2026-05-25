@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 
+import { notInFutureValidator } from '../../../shared/utils/date.validators';
 import { PrescriptionsService, PrescriptionPayload } from '../services/prescriptions.service';
 import { PatientsService } from '../../patients/services/patients.service';
 import { StaffService } from '../../staff/services/staff.service';
@@ -57,7 +58,7 @@ export class PrescriptionsForm {
 
     date_issued: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, notInFutureValidator()],
     }),
 
     medication: new FormControl('', {

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+
 import { ROUTES } from '../../../core/constants/route.constants';
+import { SidebarStateService } from '../../../shared/services/sidebar-state.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,6 +12,8 @@ import { ROUTES } from '../../../core/constants/route.constants';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
+  readonly sidebarState = inject(SidebarStateService);
+
   readonly menuItems = [
     { label: 'Dashboard', icon: 'pi pi-home', route: `/${ROUTES.app.dashboard}` },
     { label: 'Users', icon: 'pi pi-users', route: `/${ROUTES.app.users}` },

@@ -72,7 +72,7 @@ export class CdssTable {
   }
 
   get scrollHeight(): string {
-    return this.config().scrollHeight || 'clamp(320px, 55vh, 340px)';
+    return this.config().scrollHeight || 'flex';
   }
 
   get showPaginator(): boolean {

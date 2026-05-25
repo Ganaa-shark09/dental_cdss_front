@@ -21,6 +21,7 @@ export interface CdssTableColumnConfig {
 }
 
 export interface CdssTableConfig {
+  minWidth?: string | number;
   columns: CdssTableColumnConfig[];
   dataKey?: string;
 
