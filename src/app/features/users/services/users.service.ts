@@ -6,7 +6,7 @@ export class UsersService {
   private readonly api = inject(ApiService);
 
   list() {
-    return this.api.get<any[]>('users/');
+    return this.api.get<any[]>('users/users/');
   }
 
   getUsers() {
@@ -15,11 +15,11 @@ export class UsersService {
   }
 
   get(uuid: string) {
-    return this.api.get<any>(`users/${uuid}/`);
+    return this.api.get<any>(`users/users/${uuid}/`);
   }
 
   create(data: any) {
-    return this.api.post<any>('users/', data);
+    return this.api.post<any>('users/users/', data);
   }
 
   me() {

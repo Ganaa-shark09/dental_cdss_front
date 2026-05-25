@@ -6,7 +6,6 @@ import { MessageService } from 'primeng/api';
 
 import { StaffPayload, StaffService } from '../services/staff.service';
 import { ClinicsService } from '../../clinics/services/clinics.service';
-import { UsersService } from '../../users/services/users.service';
 import { CdssForm } from '../../../shared/components/form/cdss-form/cdss-form';
 import {
   CdssFormConfig,
@@ -23,7 +22,6 @@ import {
 export class StaffForm {
   private readonly staffService = inject(StaffService);
   private readonly clinicsService = inject(ClinicsService);
-  private readonly usersService = inject(UsersService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
@@ -34,27 +32,43 @@ export class StaffForm {
   loading = signal(false);
   saving = signal(false);
   clinicsLoading = signal(false);
-  usersLoading = signal(false);
 
   clinicOptions = signal<CdssSelectOption[]>([]);
-  userOptions = signal<CdssSelectOption[]>([]);
 
   form = new FormGroup({
-    user: new FormControl('', {
+    username: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: this.isEditMode ? [] : [Validators.required],
     }),
+    first_name: new FormControl('', {
+      nonNullable: true,
+      validators: this.isEditMode ? [] : [Validators.required],
+    }),
+    last_name: new FormControl('', { nonNullable: true }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: this.isEditMode ? [Validators.email] : [Validators.required, Validators.email],
+    }),
+    phone_number: new FormControl('', { nonNullable: true }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: this.isEditMode ? [] : [Validators.required, Validators.minLength(8)],
+    }),
+
     designation: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    first_name: new FormControl('', { nonNullable: true }),
-    last_name: new FormControl('', { nonNullable: true }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
-    phone_number: new FormControl('', { nonNullable: true }),
-    role: new FormControl('', { nonNullable: true }),
     specialization: new FormControl('', { nonNullable: true }),
-    clinic: new FormControl('', { nonNullable: true }),
+    license_number: new FormControl('', { nonNullable: true }),
+    years_of_experience: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.min(0)],
+    }),
+    clinic: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     is_active: new FormControl(true, { nonNullable: true }),
   });
 
@@ -71,36 +85,41 @@ export class StaffForm {
     },
     groups: [
       {
-        name: 'Staff Information',
+        name: 'User Account',
         fieldsInRow: 2,
         fields: [
-          {
-            name: 'user',
-            label: 'User',
-            type: 'select',
-            options: this.userOptions(),
-          },
-          {
-            name: 'designation',
-            label: 'Designation',
-            type: 'text',
-          },
+          { name: 'username', label: 'Username', type: 'text' },
           { name: 'first_name', label: 'First Name', type: 'text' },
           { name: 'last_name', label: 'Last Name', type: 'text' },
           { name: 'email', label: 'Email', type: 'email' },
           { name: 'phone_number', label: 'Phone', type: 'text' },
+          ...(this.isEditMode
+            ? []
+            : [{ name: 'password', label: 'Password', type: 'text' as const }]),
+        ],
+      },
+      {
+        name: 'Staff Information',
+        fieldsInRow: 2,
+        fields: [
           {
-            name: 'role',
-            label: 'Role',
+            name: 'designation',
+            label: 'Designation / Role',
             type: 'select',
             options: [
-              { label: 'Doctor', value: 'doctor' },
-              { label: 'Assistant', value: 'assistant' },
-              { label: 'Receptionist', value: 'receptionist' },
-              { label: 'Administrator', value: 'administrator' },
+              { label: 'Dentist', value: 'Dentist' },
+              { label: 'Assistant', value: 'Assistant' },
+              { label: 'Receptionist', value: 'Receptionist' },
+              { label: 'Clinic Admin', value: 'Clinic Admin' },
             ],
           },
           { name: 'specialization', label: 'Specialization', type: 'text' },
+          { name: 'license_number', label: 'License Number', type: 'text' },
+          {
+            name: 'years_of_experience',
+            label: 'Years of Experience',
+            type: 'number',
+          },
           {
             name: 'clinic',
             label: 'Clinic',
@@ -120,7 +139,6 @@ export class StaffForm {
 
   constructor() {
     this.loadClinics();
-    this.loadUsers();
 
     if (this.isEditMode && this.uuid) {
       this.loadStaff(this.uuid);
@@ -154,56 +172,27 @@ export class StaffForm {
     });
   }
 
-  loadUsers(): void {
-    this.usersLoading.set(true);
-
-    this.usersService.getUsers().subscribe({
-      next: (response: any) => {
-        const users = Array.isArray(response)
-          ? response
-          : (response && Array.isArray(response.results) ? response.results : []);
-
-        this.userOptions.set(
-          users.map((user: any) => ({
-            label:
-              [user.first_name, user.last_name].filter(Boolean).join(' ').trim() ||
-              user.username ||
-              user.email ||
-              user.uuid,
-            value: user.uuid,
-          })),
-        );
-
-        this.usersLoading.set(false);
-      },
-      error: () => {
-        this.usersLoading.set(false);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Load failed',
-          detail: 'Unable to load users.',
-        });
-      },
-    });
-  }
-
   loadStaff(uuid: string): void {
     this.loading.set(true);
 
     this.staffService.getStaffMember(uuid).subscribe({
-      next: (member) => {
+      next: (member: any) => {
         this.form.patchValue({
-          user: member.user ?? '',
-          designation: member.designation ?? '',
-          first_name: member.employee_id ?? '',
-          last_name: member.user_name ?? '',
+          username: member.username ?? '',
+          first_name: member.first_name ?? member.user_name?.split(' ')?.[0] ?? '',
+          last_name: member.last_name ?? '',
           email: member.user_email ?? '',
-          phone_number: member.years_of_experience ?? '',
-          role: member.role ?? '',
+          phone_number: member.phone_number ?? '',
+          password: '',
+
+          designation: member.designation ?? '',
           specialization: member.specialization ?? '',
+          license_number: member.license_number ?? '',
+          years_of_experience: member.years_of_experience ?? 0,
           clinic: member.clinic ?? '',
           is_active: member.is_active,
         });
+
         this.loading.set(false);
       },
       error: () => {
@@ -218,14 +207,25 @@ export class StaffForm {
   }
 
   onSave(payload: unknown): void {
-    const staffPayload = payload as StaffPayload;
+    const rawPayload = payload as any;
+
+    const staffPayload = { ...rawPayload };
+
+    if (this.isEditMode) {
+      delete staffPayload.password;
+      delete staffPayload.username;
+      delete staffPayload.email;
+      delete staffPayload.first_name;
+      delete staffPayload.last_name;
+      delete staffPayload.phone_number;
+    }
 
     this.saving.set(true);
 
     const request$ =
       this.isEditMode && this.uuid
-        ? this.staffService.updateStaff(this.uuid, staffPayload)
-        : this.staffService.createStaff(staffPayload);
+        ? this.staffService.updateStaff(this.uuid, staffPayload as StaffPayload)
+        : this.staffService.createStaff(staffPayload as StaffPayload);
 
     request$.subscribe({
       next: (member) => {
